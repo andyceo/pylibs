@@ -62,8 +62,8 @@ class BitfinexV1(object):
         data = {
             'request': request,
             'currency': currency,
-            'amount': "{:0.2f}".format(amount),
-            'rate': "{:0.2f}".format(rate),
+            'amount': amount,
+            'rate': rate,
             'period': period,
             'direction': direction
         }
