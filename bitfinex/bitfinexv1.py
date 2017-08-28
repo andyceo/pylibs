@@ -35,6 +35,12 @@ class BitfinexV1(object):
         data = {'request': self.endpoint('offers')}
         return self.send_auth_request(data)
 
+    def get_offers_hist(self):
+        """View your active offers."""
+        # @todo: add support for limit param.
+        data = {'request': self.endpoint('offers', 'hist')}
+        return self.send_auth_request(data)
+
     def get_history_movements(self, currency='usd', method='bitcoin', limit=500, since=None, until=None):
         """View your past deposits/withdrawals."""
         request = self.endpoint('history', 'movements')
