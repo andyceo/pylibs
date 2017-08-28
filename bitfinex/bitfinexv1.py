@@ -35,6 +35,21 @@ class BitfinexV1(object):
         data = {'request': self.endpoint('offers')}
         return self.send_auth_request(data)
 
+    def get_history_movements(self, currency='usd', method='bitcoin', limit=500, since=None, until=None):
+        """View your past deposits/withdrawals."""
+        request = self.endpoint('history', 'movements')
+        data = {
+            'request': request,
+            'currency': currency,
+            'method': method,
+            'limit': limit
+        }
+        if since:
+            data['since'] = since
+        if until:
+            data['until'] = until
+        return self.send_auth_request(data)
+
     def new_offer(self, currency, amount, rate, period, direction='lend'):
         """Submit a new offer."""
         request = self.endpoint('offer', 'new')
