@@ -2,7 +2,7 @@ from pymongo import MongoClient
 from pylibs import config
 
 
-def pymongoconnect(section, collection=None):
+def connect(section, collection=None):
     """Connect to the mongo"""
     host = config[section]['host']
     port = int(config[section]['port'])
