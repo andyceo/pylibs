@@ -8,7 +8,7 @@ def pymongoconnect(section, collection=None):
     port = int(config[section]['port'])
     username = config[section]['username']
     password = config[section]['password']
-    db = config[section]['db']
+    db = config[section]['database'] if config.has_option(section, 'database') else config[section]['db']
     client = MongoClient("mongodb://{}:{}@{}:{}/{}".format(username, password, host, port, db))
 
     if collection is None:
