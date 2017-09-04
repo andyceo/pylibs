@@ -35,12 +35,12 @@ def normalize_offers(offers):
     return offers
 
 
-def bfx_private_offers(bfx):
+def bfxv1_private_offers(bfx):
     offers = bfx.get_offers()
     return normalize_offers(offers)
 
 
-def bfx_private_offers_hist(bfx):
+def bfxv1_private_offers_hist(bfx):
     offers_hist = bfx.get_offers_hist()
     return normalize_offers(offers_hist)
 
