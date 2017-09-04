@@ -21,6 +21,9 @@ def connect(section, collection=None):
 def excluded_fields(db, collection):
     excluded_fields = {
         'mongo-alfadirect': {
+            'bitfinex_balances': {
+                '_id': False,
+            },
             'bitfinex_offers': {
                 '_id': False,
                 'changelog': False,
