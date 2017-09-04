@@ -26,14 +26,23 @@ def timestamp_normalize(ts):
         return ts
 
 
+def normalize_offers(offers):
+    if 'message' in offers:
+        message('API Error: {}'.format(offers['message']))
+        exit(1)
+    for offer in offers:
+        offer['timestamp'] = timestamp_normalize(offer['timestamp'])
+    return offers
+
+
+def bfx_private_offers(bfx):
+    offers = bfx.get_offers()
+    return normalize_offers(offers)
+
+
 def bfx_private_offers_hist(bfx):
     offers_hist = bfx.get_offers_hist()
-    if 'message' in offers_hist:
-        message('API Error: {}'.format(offers_hist['message']))
-        exit(1)
-    for offer in offers_hist:
-        offer['timestamp'] = timestamp_normalize(offer['timestamp'])
-    return offers_hist
+    return normalize_offers(offers_hist)
 
 if __name__ == '__main__':
     test = [12345678, 1234567.8, "1234567.8", "1234567.2", "1234567.0", "12345678"]
