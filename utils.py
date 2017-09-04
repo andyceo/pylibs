@@ -35,6 +35,10 @@ def normalize_offers(offers):
     return offers
 
 
+def bfxv1_private_balances(bfx):
+    return bfx.get_balances()
+
+
 def bfxv1_private_offers(bfx):
     offers = bfx.get_offers()
     return normalize_offers(offers)
