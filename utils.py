@@ -36,7 +36,11 @@ def normalize_offers(offers):
 
 
 def bfxv1_private_balances(bfx):
-    return bfx.get_balances()
+    balances = bfx.get_balances()
+    for balance in balances:
+        balance['amount'] = float(balance['amount'])
+        balance['available'] = float(balance['available'])
+    return balances
 
 
 def bfxv1_private_offers(bfx):
