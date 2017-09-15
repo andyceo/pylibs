@@ -52,6 +52,7 @@ def bfxv1_private_offers_hist(bfx):
     offers_hist = bfx.get_offers_hist()
     return normalize_offers(offers_hist)
 
+
 if __name__ == '__main__':
     test = [12345678, 1234567.8, "1234567.8", "1234567.2", "1234567.0", "12345678"]
     for t in test:
