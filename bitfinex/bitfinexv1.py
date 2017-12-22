@@ -74,6 +74,11 @@ class BitfinexV1(object):
         request = self.endpoint('lendbook', currency)
         return self.send_public_request(request, data)
 
+    def get_orderbook(self, symbol='btcusd', data={}):
+        """Get the full order book."""
+        request = self.endpoint('book', symbol)
+        return self.send_public_request(request, data)
+
     def get_symbols(self):
         """Get a list of valid symbol IDs."""
         request = self.endpoint('symbols')
