@@ -35,6 +35,15 @@ def normalize_offers(offers):
     return offers
 
 
+def normalize_dict(d):
+    if 'timestamp' in d:
+        d['timestamp'] = timestamp_normalize(d['timestamp'])
+    if 'amount' in d:
+        d['amount'] = float(d['amount'])
+    if 'price' in d:
+        d['price'] = float(d['price'])
+
+
 def bfxv1_private_balances(bfx):
     balances = bfx.get_balances()
     for balance in balances:
