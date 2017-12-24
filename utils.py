@@ -35,13 +35,24 @@ def normalize_offers(offers):
     return offers
 
 
+def normalize_number(n):
+    if n is str:
+        if n.find('.') == -1 and n.find('e') == -1:
+            n = int(n)
+        else:
+            n = float(n)
+    if n is not float or n is not int:
+        n = 0
+    return n
+
+
 def normalize_dict(d):
     if 'timestamp' in d:
         d['timestamp'] = timestamp_normalize(d['timestamp'])
     if 'amount' in d:
-        d['amount'] = int(d['amount']) if d['amount'].find('.') == -1 else float(d['amount'])
+        d['amount'] = normalize_number(d['amount'])
     if 'price' in d:
-        d['price'] = int(d['price']) if d['price'].find('.') == -1 else float(d['price'])
+        d['price'] = normalize_number(d['price'])
     return d
 
 
