@@ -36,12 +36,12 @@ def normalize_offers(offers):
 
 
 def normalize_number(n):
-    if n is str:
+    if type(n) is str:
         if n.find('.') == -1 and n.find('e') == -1:
             n = int(n)
         else:
             n = float(n)
-    if n is not float or n is not int:
+    elif type(n) is not float and n is not int:
         n = 0
     return n
 
