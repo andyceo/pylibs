@@ -39,9 +39,10 @@ def normalize_dict(d):
     if 'timestamp' in d:
         d['timestamp'] = timestamp_normalize(d['timestamp'])
     if 'amount' in d:
-        d['amount'] = float(d['amount'])
+        d['amount'] = int(d['amount']) if d['amount'].find('.') == -1 else float(d['amount'])
     if 'price' in d:
-        d['price'] = float(d['price'])
+        d['price'] = int(d['price']) if d['price'].find('.') == -1 else float(d['price'])
+    return d
 
 
 def bfxv1_private_balances(bfx):
