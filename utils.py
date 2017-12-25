@@ -1,3 +1,4 @@
+import copy
 import datetime
 
 
@@ -46,7 +47,8 @@ def normalize_number(n):
     return n
 
 
-def normalize_dict(d):
+def normalize_dict(dictionary):
+    d = copy.deepcopy(dictionary)
     if 'timestamp' in d:
         d['timestamp'] = timestamp_normalize(d['timestamp'])
     if 'amount' in d:
