@@ -11,3 +11,12 @@ def connect(section):
     db = config[section]['database'] if config.has_option(section, 'database') else config[section]['db']
     client = InfluxDBClient(host, port, username, password, db)
     return client
+
+
+def write(client, points, time_precision=None):
+    batch_size = 10000
+    l = len(points)
+    for i in range(0, l, batch_size):
+        end = i + batch_size - 1
+        end = l - 1 if end > l - 1 else end
+        client.write_points(points[i:end], time_precision=time_precision)
