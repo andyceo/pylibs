@@ -1,4 +1,4 @@
-FROM python:3.6-alpine
+FROM python:3-alpine
 ENV PIP_REQUIRED_PACKAGES "influxdb pymongo requests"
 ENV PIP_SUGGESTED_PACKAGES "tabulate"
 RUN apk add --update --no-cache ca-certificates && \
