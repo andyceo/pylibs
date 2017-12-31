@@ -14,7 +14,7 @@ def connect(section):
     return client
 
 
-def write(client, points, time_precision=None):
+def batch_write_points(client, points, time_precision=None):
     batch_size = 10000
     l = len(points)
     for i in range(0, l, batch_size):
@@ -88,4 +88,4 @@ def move_points(source, dest):
                 point_raw[meta_key][key] = point[key]
         points.append(point_raw)
 
-    write(dest['client'], points)
+    batch_write_points(dest['client'], points)
