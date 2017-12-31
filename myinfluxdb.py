@@ -1,17 +1,15 @@
 import copy
 from influxdb import InfluxDBClient
-from pylibs import config
 
 
-def connect(section):
+def connect(config):
     """Connect to the InfluxDB"""
-    host = config[section]['host']
-    port = int(config[section]['port'])
-    username = config[section]['username']
-    password = config[section]['password']
-    db = config[section]['database'] if config.has_option(section, 'database') else config[section]['db']
-    client = InfluxDBClient(host, port, username, password, db)
-    return client
+    host = config['host'] if 'host' in config else 'localhost'
+    port = int(config['port']) if 'port' in config else 8086
+    username = config['username']
+    password = config['password']
+    database = config['database']
+    return InfluxDBClient(host, port, username, password, database)
 
 
 def batch_write_points(client, points, time_precision=None):
