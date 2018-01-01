@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import copy
 import calendar
 import datetime
@@ -23,8 +25,7 @@ def timestamp_useless_microseconds(ts):
 def timestamp2int(ts):
     if type(ts) is str:
         ts = float(ts)
-    # int() is for python2 version (where round always return float)
-    return int(round(ts))
+    return round(ts)
 
 
 def timestamp_normalize(ts):
