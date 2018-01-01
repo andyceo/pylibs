@@ -1,10 +1,17 @@
 import copy
+import calendar
 import datetime
+import time
 
 
 def message(msg):
     date = datetime.datetime.utcnow().replace(microsecond=0).isoformat()
     print("{0:s} {1:s}".format(date, msg))
+
+
+def isodatestring2timestamp(s):
+    struct_time = time.strptime(s, '%Y-%m-%dT%H:%M:%SZ')
+    return int(calendar.timegm(struct_time))
 
 
 def timestamp_useless_microseconds(ts):
@@ -81,3 +88,13 @@ if __name__ == '__main__':
     for t in test:
         transformed = timestamp2int(t)
         print(t, '->', transformed, ', ', type(t), '->', type(transformed))
+
+    test = [
+        {'input': '2017-12-25T14:59:21Z', 'output': 1514213961}
+    ]
+    for t in test:
+        transformed = isodatestring2timestamp(t['input'])
+        is_ok = 'OK' if transformed == t['output'] else 'FAIL'
+        is_eq = '==' if transformed == t['output'] else '!='
+        print("{}: {}({}) -> {}({}) {} {}".format(is_ok, t['input'], type(t['input']), transformed, type(transformed),
+                                                  is_eq, t['output']))
