@@ -10,7 +10,7 @@ import time
 
 def message(msg):
     date = datetime.datetime.utcnow().replace(microsecond=0).isoformat()
-    print("{0:s} {1:s}".format(date, msg))
+    print("{0:s}Z {1:s}".format(date, msg))
 
 
 def isodatestring2timestamp(s):
