@@ -4,6 +4,7 @@ import copy
 import calendar
 import datetime
 import os
+import shutil
 import tarfile
 import time
 
@@ -89,6 +90,27 @@ def bfxv1_private_offers_hist(bfx):
 def archive_directory(output_filename, source_dir):
     with tarfile.open(output_filename, "w:gz") as tar:
         tar.add(source_dir, arcname=os.path.basename(source_dir))
+
+
+def archive_directory_safe(output_filename, source_dir):
+    if os.path.isdir(source_dir):
+        dirsize = sum(os.path.getsize(f) for f in os.listdir(source_dir) if os.path.isfile(f))
+        statvfs = os.statvfs(source_dir)
+        freespace = statvfs.f_frsize * statvfs.f_bavail
+        if dirsize + 1024 > freespace:
+            message("Free space {} may not be enough for archiving! Exiting...".format(freespace))
+            return False
+
+        archive_directory(output_filename, source_dir)
+
+        if not test_archive(output_filename):
+            message("Something goes wrong checking archive. Exiting...")
+            return False
+
+        shutil.rmtree(source_dir)
+        return True
+
+    return False
 
 
 def test_archive(archive_filename):
