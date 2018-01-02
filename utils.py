@@ -3,6 +3,8 @@
 import copy
 import calendar
 import datetime
+import os
+import tarfile
 import time
 
 
@@ -82,6 +84,11 @@ def bfxv1_private_offers(bfx):
 def bfxv1_private_offers_hist(bfx):
     offers_hist = bfx.get_offers_hist()
     return normalize_offers(offers_hist)
+
+
+def archive_directory(output_filename, source_dir):
+    with tarfile.open(output_filename, "w:gz") as tar:
+        tar.add(source_dir, arcname=os.path.basename(source_dir))
 
 
 if __name__ == '__main__':
