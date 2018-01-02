@@ -91,6 +91,35 @@ def archive_directory(output_filename, source_dir):
         tar.add(source_dir, arcname=os.path.basename(source_dir))
 
 
+def test_archive(archive_filename, verbose=False):
+    try:
+        tardude = tarfile.open(archive_filename)
+    except:
+        if verbose:
+            message("There was an error opening tarfile. The file might be corrupt or missing.")
+        return False
+
+    try:
+        members = tardude.getmembers()
+    except:
+        if verbose:
+            message("There was an error reading tarfile members.")
+        return False
+
+    for member in members:
+        if member.isfile():
+            try:
+                with tardude.extractfile(member.name) as target:
+                    for chunk in iter(lambda: target.read(1024), b''):
+                        pass
+            except:
+                if verbose:
+                    message("File: {} is corrupt.".format(member.name))
+                return False
+
+    return True
+
+
 if __name__ == '__main__':
     test = [12345678, 1234567.8, "1234567.8", "1234567.2", "1234567.0", "12345678"]
     for t in test:
