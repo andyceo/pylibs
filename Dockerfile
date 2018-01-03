@@ -1,4 +1,5 @@
 FROM python:3-alpine
+MAINTAINER Andrey Andreev <andyceo@yandex.ru> (@andyceo)
 ENV PIP_REQUIRED_PACKAGES "influxdb pymongo requests"
 ENV PIP_SUGGESTED_PACKAGES "tabulate"
 RUN apk add --update --no-cache ca-certificates && \
