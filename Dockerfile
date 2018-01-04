@@ -7,5 +7,6 @@ RUN apk add --update --no-cache ca-certificates && \
     pip --no-cache-dir --disable-pip-version-check install `echo " $PIP_SUGGESTED_PACKAGES"` && \
     mkdir /app && rm -rf /tmp/* /var/tmp/*
 COPY . /app/pylibs
-RUN rm -rf /app/pylibs/{docker,.git,.gitignore,Dockerfile,README.md,build.sh}
+RUN rm -rf /app/pylibs/.git /app/pylibs/.gitignore /app/pylibs/docker /app/pylibs/Dockerfile /app/pylibs/README.md \
+    /app/pylibs/build.sh
 WORKDIR /app
