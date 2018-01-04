@@ -87,9 +87,15 @@ def bfxv1_private_offers_hist(bfx):
     return normalize_offers(offers_hist)
 
 
-def archive_directory(output_filename, source_dir, mode='w:gz'):
-    with tarfile.open(output_filename, mode) as tar:
-        tar.add(source_dir, arcname=os.path.basename(source_dir))
+def archive_directory(archive_filename, source_dir, mode='w:gz'):
+    if mode == 'w:xz':
+        # Using undocumented preset parameter for tarfile.open for lzma compression to maximize compression level for
+        # xz formats. It was found reading lzma module documentation for lzma.open() function.
+        with tarfile.open(archive_filename, mode, preset=9) as tar:
+            tar.add(source_dir, arcname=os.path.basename(source_dir))
+    else:
+        with tarfile.open(archive_filename, mode, compresslevel=9) as tar:
+            tar.add(source_dir, arcname=os.path.basename(source_dir))
 
 
 def archive_directory_safe(output_filename, source_dir, mode='w:gz'):
