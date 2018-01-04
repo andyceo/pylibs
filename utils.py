@@ -87,12 +87,12 @@ def bfxv1_private_offers_hist(bfx):
     return normalize_offers(offers_hist)
 
 
-def archive_directory(output_filename, source_dir):
-    with tarfile.open(output_filename, "w:gz") as tar:
+def archive_directory(output_filename, source_dir, mode='w:gz'):
+    with tarfile.open(output_filename, mode) as tar:
         tar.add(source_dir, arcname=os.path.basename(source_dir))
 
 
-def archive_directory_safe(output_filename, source_dir):
+def archive_directory_safe(output_filename, source_dir, mode='w:gz'):
     if os.path.isdir(source_dir):
         dirsize = sum(os.path.getsize(f) for f in os.listdir(source_dir) if os.path.isfile(f))
         statvfs = os.statvfs(source_dir)
@@ -101,7 +101,7 @@ def archive_directory_safe(output_filename, source_dir):
             message("Free space {} may not be enough for archiving! Exiting...".format(freespace))
             return False
 
-        archive_directory(output_filename, source_dir)
+        archive_directory(output_filename, source_dir, mode)
 
         if not test_archive(output_filename):
             message("Something goes wrong checking archive. Exiting...")
