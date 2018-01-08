@@ -5,6 +5,7 @@ import calendar
 import datetime
 import os
 import shutil
+import sys
 import tarfile
 import time
 
@@ -12,6 +13,7 @@ import time
 def message(msg):
     date = datetime.datetime.utcnow().replace(microsecond=0).isoformat()
     print("{0:s}Z {1:s}".format(date, msg))
+    sys.stdout.flush()
 
 
 def isodatestring2timestamp(s):
