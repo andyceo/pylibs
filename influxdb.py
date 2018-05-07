@@ -1,4 +1,6 @@
+import argparse
 import copy
+import os
 from influxdb import InfluxDBClient
 
 
@@ -87,3 +89,22 @@ def move_points(source, dest):
         points.append(point_raw)
 
     batch_write_points(dest['client'], points)
+
+
+def add_influxdb_options(parser: argparse.ArgumentParser):
+    """Add InfluxDB connection parameters to given parser. Also read environment variables for defaults"""
+
+    parser.add_argument('--influxdb-host', nargs=1, metavar='HOST',
+                        default=os.environ.get('INFLUXDB_HOST', 'localhost'), help='InfluxDB host name')
+
+    parser.add_argument('--influxdb-port', nargs=1, metavar='PORT', default=os.environ.get('INFLUXDB_PORT', 8086),
+                        help='InfluxDB host port')
+
+    parser.add_argument('--influxdb-user', nargs=1, metavar='USER',
+                        default=os.environ.get('INFLUXDB_USER', 'root'), help='InfluxDB user')
+
+    parser.add_argument('--influxdb-password', '--influxdb-pass', nargs=1, metavar='PASSWORD', default=os.environ.get(
+        'INFLUXDB_PASSWORD', os.environ.get('INFLUXDB_PASS', '')), help='InfluxDB user password')
+
+    parser.add_argument('--influxdb-database', '--influxdb-db', nargs=1, metavar='DATABASE', default=os.environ.get(
+        'INFLUXDB_DATABASE', os.environ.get('INFLUXDB_DB', '')), help='InfluxDB database to connect to')
