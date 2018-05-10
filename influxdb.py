@@ -100,14 +100,14 @@ def argparse_add_influxdb_options(parser: argparse.ArgumentParser):
     parser.add_argument('--influxdb-port', nargs=1, metavar='PORT', default=os.environ.get('INFLUXDB_PORT', 8086),
                         help='InfluxDB host port')
 
-    parser.add_argument('--influxdb-user', nargs=1, metavar='USER',
-                        default=os.environ.get('INFLUXDB_USER', 'root'), help='InfluxDB user')
+    parser.add_argument('--influxdb-user', nargs=1, metavar='USER', default=os.environ.get('INFLUXDB_USER', [None]),
+                        help='InfluxDB user')
 
-    parser.add_argument('--influxdb-password', '--influxdb-pass', nargs=1, metavar='PASSWORD', default=os.environ.get(
-        'INFLUXDB_PASSWORD', os.environ.get('INFLUXDB_PASS', '')), help='InfluxDB user password')
+    parser.add_argument('--influxdb-password', nargs=1, metavar='PASSWORD',
+                        default=os.environ.get('INFLUXDB_PASSWORD', [None]), help='InfluxDB user password')
 
     parser.add_argument('--influxdb-password-file', nargs=1, metavar='FILE', default=os.environ.get(
-        'INFLUXDB_PASSWORD_FILE', ''), help='Filename contains InfluxDB user password')
+        'INFLUXDB_PASSWORD_FILE', [None]), help='Filename contains InfluxDB user password')
 
-    parser.add_argument('--influxdb-database', '--influxdb-db', nargs=1, metavar='DATABASE', default=os.environ.get(
-        'INFLUXDB_DATABASE', os.environ.get('INFLUXDB_DB', '')), help='InfluxDB database to connect to')
+    parser.add_argument('--influxdb-database', nargs=1, metavar='DATABASE',
+                        default=os.environ.get('INFLUXDB_DATABASE', [None]), help='InfluxDB database to connect to')
