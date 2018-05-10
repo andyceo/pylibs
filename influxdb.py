@@ -91,7 +91,7 @@ def move_points(source, dest):
     batch_write_points(dest['client'], points)
 
 
-def add_influxdb_options(parser: argparse.ArgumentParser):
+def argparse_add_influxdb_options(parser: argparse.ArgumentParser):
     """Add InfluxDB connection parameters to given parser. Also read environment variables for defaults"""
 
     parser.add_argument('--influxdb-host', nargs=1, metavar='HOST',
