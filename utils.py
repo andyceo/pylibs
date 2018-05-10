@@ -171,6 +171,27 @@ def argparse_add_daemon_options(parser: argparse.ArgumentParser, default_interva
                                        'option is only make sense if --daemon option is set'.format(default_interval))
 
 
+def argparse_get_filezed_value(args: argparse.Namespace, option_name: str):
+    """
+    Correctly handle filezed option (those options that have _FILE co-option to read their value from file).
+
+    :param args: parsed arguments (result of parser.parse_args())
+    :param option_name: should be low-capitalized hyphen-delimeted string, for example: database-password
+    :return: option value, None if not exists
+    """
+
+    value = getattr(args, option_name, os.environ.get(option_name.upper(), None))
+
+    if value is None:
+        option_name_file = option_name + '-file'
+        filename = getattr(args, option_name_file, os.environ.get(option_name_file.upper(), None))
+        if filename:
+            with open(filename, 'r') as file:
+                value = file.read().strip(' \t\n\r')
+
+    return value
+
+
 if __name__ == '__main__':
     test = [12345678, 1234567.8, "1234567.8", "1234567.2", "1234567.0", "12345678"]
     for t in test:
