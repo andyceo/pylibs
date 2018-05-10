@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-
 import copy
 import calendar
 import datetime
-import os
 import shutil
+import socket
+import os
+import ssl
 import sys
 import tarfile
 import time
@@ -145,6 +146,18 @@ def test_archive(archive_filename):
                 return False
 
     return True
+
+
+def get_cert_expiration_timestamp(url) -> int:
+    """Return timestamp for SSL certificate expiration date and time. Zero returned in case of any errors"""
+    try:
+        ctx = ssl.create_default_context()
+        s = ctx.wrap_socket(socket.socket(), server_hostname=url)
+        s.connect((url, 443))
+        cert = s.getpeercert()
+        return round(time.mktime(datetime.datetime.strptime(cert['notAfter'], "%b %d %H:%M:%S %Y %Z").timetuple()))
+    except ssl.SSLError:
+        return 0
 
 
 if __name__ == '__main__':
