@@ -171,7 +171,7 @@ def argparse_add_daemon_options(parser: argparse.ArgumentParser, default_interva
                                        'option is only make sense if --daemon option is set'.format(default_interval))
 
 
-def argparse_get_filezed_value(args: argparse.Namespace, option_name: str):
+def argparse_get_filezed_value(args: argparse.Namespace, option_name: str) -> list:
     """
     Correctly handle filezed option (those options that have _FILE co-option to read their value from file).
 
@@ -179,15 +179,16 @@ def argparse_get_filezed_value(args: argparse.Namespace, option_name: str):
     :param option_name: should be lower cased hyphen-delimeted string, for example: database-password
     :return: option value, None if not exists
     """
-    option_name_dehyphened = option_name.replace('-', '_')
-    value = getattr(args, option_name_dehyphened, os.environ.get(option_name_dehyphened.upper(), None))
 
-    if value is None:
+    option_name_dehyphened = option_name.replace('-', '_')
+    value = getattr(args, option_name_dehyphened, os.environ.get(option_name_dehyphened.upper(), [None]))
+
+    if value[0] is None:
         option_name_file = option_name_dehyphened + '_file'
-        filename = getattr(args, option_name_file, os.environ.get(option_name_file.upper(), None))
-        if filename:
-            with open(filename, 'r') as file:
-                value = file.read().strip(' \t\n\r')
+        filename = getattr(args, option_name_file, os.environ.get(option_name_file.upper(), [None]))
+        if filename[0] is not None:
+            with open(filename[0], 'r') as file:
+                value = [file.read().strip(' \t\n\r')]
 
     return value
 
