@@ -111,3 +111,26 @@ def argparse_add_influxdb_options(parser: argparse.ArgumentParser):
 
     parser.add_argument('--influxdb-database', metavar='DATABASE', default=os.environ.get('INFLUXDB_DATABASE', None),
                         help='InfluxDB database to connect to')
+
+
+def timestamp_to_influxdb_format(timestamp=time.time()) -> int:
+    """
+    Convert timestamp to integer of InfluxDB format.
+
+    :param timestamp: Datetime in timestamp format (number of seconds that elapsed since
+        00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970. Can be string, int or float
+    :return: Integer that ready to use in influxdb.client.write_points() function without precision parameter
+    """
+    return round(float(timestamp) * 1000000000)
+
+
+if __name__ == '__main__':
+    test = [
+        {'input': '1526041380.9045842', 'output': 1526041380904584200}
+    ]
+    for t in test:
+        # @todo find why test did not pass, transformed = 1526041380904584192 if use round() or int()
+        transformed = timestamp_to_influxdb_format(t['input'])
+        is_ok = 'OK' if transformed == t['output'] else 'FAIL'
+        is_eq = '==' if transformed == t['output'] else '!='
+        print("{}: {}({}) -> {}({}) {} {}".format(is_ok, t['input'], type(t['input']), transformed, type(transformed), is_eq, t['output']))
