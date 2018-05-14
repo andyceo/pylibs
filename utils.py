@@ -161,14 +161,14 @@ def get_cert_expiration_timestamp(url) -> int:
         return 0
 
 
-def argparse_add_daemon_options(parser: argparse.ArgumentParser, default_interval = 20):
+def argparse_add_daemon_options(parser: argparse.ArgumentParser, default_interval=20):
     """Add daemon mode parameters to given parser. Also read environment variables for defaults"""
 
     parser.add_argument('--daemon', action='store_true', help='Start script in daemon mode. See --interval also')
 
-    parser.add_argument('--interval', nargs=1, metavar='SECONDS', default=os.environ.get('INTERVAL', default_interval),
-                        type=int, help='Set daemon mode check interval in SECONDS. Default interval is {} sec. This '
-                                       'option is only make sense if --daemon option is set'.format(default_interval))
+    parser.add_argument('--interval', metavar='SECONDS', default=os.environ.get('INTERVAL', default_interval), type=int,
+                        help='Set daemon mode check interval in SECONDS. Default interval is {} sec. This '
+                             'option is only make sense if --daemon option is set'.format(default_interval))
 
 
 def argparse_get_filezed_value(args: argparse.Namespace, option_name: str):
