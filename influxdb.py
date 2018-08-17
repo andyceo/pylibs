@@ -3,6 +3,7 @@ import copy
 import os
 import time
 from influxdb import InfluxDBClient
+from influxdb.exceptions import InfluxDBClientError, InfluxDBServerError
 
 
 def connect(config):
