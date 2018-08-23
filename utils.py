@@ -160,7 +160,11 @@ def get_cert_expiration_timestamp(url) -> int:
     except ssl.SSLError as err:
         message('!SSL error happened: {}'.format(err))
     except socket.gaierror as err:
-        message('!Get Address Info Error: {}'.format(err))
+        message('!Socket get address info error: {}'.format(err))
+    except socket.herror as err:
+        message('!Socket address-related error: {}'.format(err))
+    except socket.error as err:
+        message('!General Socket error: {}'.format(err))
     return 0
 
 
