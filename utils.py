@@ -157,8 +157,11 @@ def get_cert_expiration_timestamp(url) -> int:
         s.connect((url, 443))
         cert = s.getpeercert()
         return round(time.mktime(datetime.datetime.strptime(cert['notAfter'], "%b %d %H:%M:%S %Y %Z").timetuple()))
-    except ssl.SSLError:
-        return 0
+    except ssl.SSLError as err:
+        message('!SSL error happened: {}'.format(err))
+    except socket.gaierror as err:
+        message('!Get Address Info Error: {}'.format(err))
+    return 0
 
 
 def argparse_add_daemon_options(parser: argparse.ArgumentParser, default_interval=20):
