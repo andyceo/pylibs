@@ -158,13 +158,13 @@ def get_cert_expiration_timestamp(url) -> int:
         cert = s.getpeercert()
         return round(time.mktime(datetime.datetime.strptime(cert['notAfter'], "%b %d %H:%M:%S %Y %Z").timetuple()))
     except ssl.SSLError as err:
-        message('!SSL error happened: {}'.format(err))
+        message('!SSL error happened: {} for url {}'.format(err, url))
     except socket.gaierror as err:
-        message('!Socket get address info error: {}'.format(err))
+        message('!Socket get address info error: {} for url {}'.format(err, url))
     except socket.herror as err:
-        message('!Socket address-related error: {}'.format(err))
+        message('!Socket address-related error: {} for url {}'.format(err, url))
     except socket.error as err:
-        message('!General Socket error: {}'.format(err))
+        message('!General Socket error: {} for url {}'.format(err, url))
     return 0
 
 
