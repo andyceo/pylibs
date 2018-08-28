@@ -2,6 +2,7 @@ import argparse
 import copy
 import os
 import time
+import utils
 from influxdb import InfluxDBClient
 from influxdb.exceptions import InfluxDBClientError, InfluxDBServerError
 
@@ -124,6 +125,15 @@ def timestamp_to_influxdb_format(timestamp=time.time()) -> int:
     :return: Integer that ready to use in influxdb.client.write_points() function without precision parameter
     """
     return round(float(timestamp) * 1000000000)
+
+
+def write_points_with_exception_handling(client, points, time_precision=None):
+    try:
+        client.write_points(points, time_precision=time_precision)
+    except InfluxDBClientError as err:
+        utils.message('!Nothing saved as InfluxDB client error happens: {}'.format(err))
+    except InfluxDBServerError as err:
+        utils.message('!Nothing saved as InfluxDB server error happens: {}'.format(err))
 
 
 if __name__ == '__main__':
