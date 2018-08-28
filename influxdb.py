@@ -129,7 +129,7 @@ def timestamp_to_influxdb_format(timestamp=time.time()) -> int:
 
 def write_points_with_exception_handling(client, points, time_precision=None):
     try:
-        client.write_points(points, time_precision=time_precision)
+        return client.write_points(points, time_precision=time_precision)
     except InfluxDBClientError as err:
         utils.message('!Nothing saved as InfluxDB client error happens: {}'.format(err))
     except InfluxDBServerError as err:
