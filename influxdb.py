@@ -11,6 +11,7 @@ def connect(config):
     """Connect to the InfluxDB"""
     host = config['host'] if 'host' in config else 'localhost'
     port = int(config['port']) if 'port' in config else 8086
+    timeout = int(config['timeout']) if 'timeout' in config else 5
     username = config['username']
     password = config['password']
     database = config['database']
