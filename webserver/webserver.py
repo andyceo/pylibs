@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Implements basic web server with some default GET requests handling and logging"""
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
