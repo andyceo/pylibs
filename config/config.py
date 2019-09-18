@@ -106,7 +106,15 @@ def read_some_environment_variables_with_defaults():
         }
     }
 
-    return _flatten_vars_dict(defaults, '', {})
+    vars = _flatten_vars_dict(defaults, '', {})
+    for k in vars:
+        if k[-5:] == '_FILE' and vars[k]:
+            substituted_k = k[:-5]
+            if substituted_k not in vars or not vars[substituted_k]:
+                with open(vars[k]) as f:
+                    vars[substituted_k] = f.read().strip(' \t\n\r')
+
+    return vars
 
 
 # @TODO this is done for compatibility reasons, remove when update all projects that use it and leave only functions
