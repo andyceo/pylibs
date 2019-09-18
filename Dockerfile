@@ -8,7 +8,7 @@ RUN apk add --update --no-cache ca-certificates && \
     mkdir /app && rm -rf /tmp/* /var/tmp/*
 COPY ./bitfinex /app/pylibs/bitfinex
 COPY ./__init__.py /app/pylibs/__init__.py
-COPY ./config.py /app/pylibs/config.py
+COPY config/config.py /app/pylibs/config.py
 COPY ./influxdb.py /app/pylibs/influxdb.py
 COPY ./mongodb.py /app/pylibs/mongodb.py
 COPY ./utils.py /app/pylibs/utils.py
