@@ -1,8 +1,22 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Some common work for configuration through config file and environment variables."""
 
 import configparser
+import logging
 import os
 import sys
+
+
+def _flatten_vars_dict(d, previous_key, flattened_dict):
+    """Call this like that: vars = _flatten_dict(somevars, '', {}) """
+    if isinstance(d, dict):
+        for k in d:
+            new_key = '{}_{}'.format(previous_key.upper(), k.upper()) if len(previous_key) > 0 else k
+            _flatten_vars_dict(d[k], new_key, flattened_dict)
+    else:
+        flattened_dict[previous_key] = os.environ.get(previous_key, d)
+    return flattened_dict
 
 
 def _environ_lookup(section: str, key: str, value, d: dict):
@@ -72,5 +86,32 @@ def parse(defaults_as_section=False) -> dict:
     return config_dict
 
 
+def read_some_environment_variables_with_defaults():
+    defaults = {
+        'influxdb': {
+            'host': 'influxdb',
+            'port': 8086,
+            'timeout': 5,
+            'username': None,
+            'password': None,
+            'password_file': None,
+            'database': None,
+            'measurement': None,
+        },
+
+        'logging': {
+            'level': logging.INFO,
+            'format': "[%(asctime)s] %(levelname)s [%(name)s.%(module)s.%(funcName)s:%(lineno)d] %(message)s",
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        }
+    }
+
+    return _flatten_vars_dict(defaults, '', {})
+
+
 # @TODO this is done for compatibility reasons, remove when update all projects that use it and leave only functions
 config = parse(True)
+
+
+if __name__ == '__main__':
+    print(read_some_environment_variables_with_defaults())
