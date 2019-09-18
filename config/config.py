@@ -6,16 +6,17 @@ import configparser
 import logging
 import os
 import sys
+from deepmerge import always_merger
 
 
 def _flatten_vars_dict(d, previous_key, flattened_dict):
-    """Call this like that: vars = _flatten_dict(somevars, '', {}) """
+    """Call this like that: variables = _flatten_dict(somevars, '', {})"""
     if isinstance(d, dict):
         for k in d:
-            new_key = '{}_{}'.format(previous_key.upper(), k.upper()) if len(previous_key) > 0 else k
+            new_key = '{}_{}'.format(previous_key, k) if len(previous_key) > 0 else k
             _flatten_vars_dict(d[k], new_key, flattened_dict)
     else:
-        flattened_dict[previous_key] = os.environ.get(previous_key, d)
+        flattened_dict[previous_key.upper()] = os.environ.get(previous_key, d)
     return flattened_dict
 
 
@@ -86,7 +87,7 @@ def parse(defaults_as_section=False) -> dict:
     return config_dict
 
 
-def read_some_environment_variables_with_defaults():
+def getenvars(variables=None):
     defaults = {
         'influxdb': {
             'host': 'influxdb',
@@ -103,18 +104,22 @@ def read_some_environment_variables_with_defaults():
             'level': logging.INFO,
             'format': "[%(asctime)s] %(levelname)s [%(name)s.%(module)s.%(funcName)s:%(lineno)d] %(message)s",
             'datefmt': '%Y-%m-%d %H:%M:%S',
-        }
+        },
+
+        'test': 'sometest'
     }
 
-    vars = _flatten_vars_dict(defaults, '', {})
-    for k in vars:
-        if k[-5:] == '_FILE' and vars[k]:
-            substituted_k = k[:-5]
-            if substituted_k not in vars or not vars[substituted_k]:
-                with open(vars[k]) as f:
-                    vars[substituted_k] = f.read().strip(' \t\n\r')
+    always_merger.merge(defaults, variables if variables else {})  # merge given dict with defaults
 
-    return vars
+    variables = _flatten_vars_dict(defaults, '', {})
+    for k in variables:
+        if k[-5:] == '_FILE' and variables[k]:
+            substituted_k = k[:-5]
+            if substituted_k not in variables or not variables[substituted_k]:
+                with open(variables[k]) as f:
+                    variables[substituted_k] = f.read().strip(' \t\n\r')
+
+    return variables
 
 
 # @TODO this is done for compatibility reasons, remove when update all projects that use it and leave only functions
@@ -122,4 +127,5 @@ config = parse(True)
 
 
 if __name__ == '__main__':
-    print(read_some_environment_variables_with_defaults())
+    a = {'users': None}
+    print(getenvars(a))
