@@ -33,10 +33,10 @@ class WebServer(BaseHTTPRequestHandler):
         # Write content as encoded data with given encoding
         self.wfile.write(content.encode(encoding))
 
-    def do_GET(self):
-        logging.info("Received GET query: '%s'", self.path)
-        self._send_rsp()
         sys.stdout.flush()  # for printing log messages immediately
+
+    def do_GET(self):
+        self._send_rsp()
 
 
 def run(bind_address='0.0.0.0', port=8080):
