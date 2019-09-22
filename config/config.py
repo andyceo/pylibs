@@ -16,7 +16,8 @@ def _flatten_vars_dict(d, previous_key, flattened_dict):
             new_key = '{}_{}'.format(previous_key, k) if len(previous_key) > 0 else k
             _flatten_vars_dict(d[k], new_key, flattened_dict)
     else:
-        flattened_dict[previous_key.upper()] = os.environ.get(previous_key, d)
+        pk = previous_key.upper()
+        flattened_dict[pk] = os.environ.get(pk, d)
     return flattened_dict
 
 
