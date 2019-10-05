@@ -15,7 +15,8 @@ def connect(config):
     username = config['username']
     password = config['password']
     database = config['database']
-    return InfluxDBClient(host, port, username, password, database)
+    return InfluxDBClient(host=host, port=port, username=username, password=password, database=database,
+                          timeout=timeout)
 
 
 def batch_write_points(client, points, time_precision=None):
