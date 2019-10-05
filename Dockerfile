@@ -1,6 +1,6 @@
 FROM python:3-alpine
 LABEL maintainer="Andrey Andreev <andyceo@yandex.ru> (@andyceo)"
-ENV PIP_SUGGESTED_PACKAGES "deepmerge python-dateutil tabulate"
+ENV PIP_SUGGESTED_PACKAGES "python-dateutil tabulate"
 COPY .  /app/pylibs
 WORKDIR /app
 RUN apk add --update --no-cache ca-certificates && \
