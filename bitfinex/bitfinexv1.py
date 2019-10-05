@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Store BitfinexV1 class"""
 import base64
 import hashlib
 import hmac
@@ -7,7 +10,7 @@ import time
 
 
 class BitfinexV1(object):
-
+    """Allow make queries to Bitfinex API v1 (stable). See https://docs.bitfinex.com/v1/docs"""
     api_key = ''
     api_secret = ''
     api_url = 'https://api.bitfinex.com'
