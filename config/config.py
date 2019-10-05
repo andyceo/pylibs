@@ -88,6 +88,18 @@ def parse(defaults_as_section=False) -> dict:
     return config_dict
 
 
+def group_envars(evs, prefix):
+    """Group envars on given prefix and return dictionary with elements without prefix and lowercased keys"""
+    res = {}
+    p = prefix.upper() + '_'
+    plen = len(p)
+    for vk in evs:
+        if vk[:plen] == p:
+            nk = vk[plen:].lower()
+            res[nk] = evs[vk]
+    return res
+
+
 def getenvars(variables=None):
     defaults = {
         'influxdb': {
