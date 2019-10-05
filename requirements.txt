@@ -1,0 +1,4 @@
+environs
+influxdb
+pymongo
+requests
