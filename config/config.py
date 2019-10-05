@@ -102,6 +102,13 @@ def group_envars(evs, prefix):
 
 def getenvars(variables=None):
     defaults = {
+        'bitfinex': {
+            'api':
+                {
+                    'key': '',
+                    'secret': '',
+                }
+        },
         'influxdb': {
             'host': 'influxdb',
             'port': 8086,
@@ -118,6 +125,8 @@ def getenvars(variables=None):
             'format': "[%(asctime)s] %(levelname)s [%(name)s.%(module)s.%(funcName)s:%(lineno)d] %(message)s",
             'datefmt': '%Y-%m-%d %H:%M:%S',
         },
+
+        'delay': 30,
 
         'test': 'sometest'
     }
