@@ -106,7 +106,9 @@ def getenvars(variables=None):
             'api':
                 {
                     'key': '',
+                    'key_file': None,
                     'secret': '',
+                    'secret_file': None,
                 }
         },
         'influxdb': {

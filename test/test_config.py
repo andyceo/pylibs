@@ -24,7 +24,9 @@ class TestConfig(unittest.TestCase):
     def test_getenvars(self):
         expected_result = {
             'BITFINEX_API_KEY': '',
+            'BITFINEX_API_KEY_FILE': None,
             'BITFINEX_API_SECRET': '',
+            'BITFINEX_API_SECRET_FILE': None,
             'INFLUXDB_HOST': 'influxdb',
             'INFLUXDB_PORT': 8086,
             'INFLUXDB_TIMEOUT': 5,
