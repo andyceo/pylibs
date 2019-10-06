@@ -16,9 +16,37 @@ class BitfinexV1(object):
     api_url = 'https://api.bitfinex.com'
     timeout = 5.0
 
+    # API endpoints metainformation. Ratelimits measured in request per minute
+    metainfo = {
+        'account_fees': {
+            'doc_url': 'https://docs.bitfinex.com/v1/reference#rest-auth-fees',
+            'ratelimit': 5,
+            'method': 'POST',
+            'authenticated': True,
+            'group': None
+        },
+        'account_infos': {
+            'doc_url': 'https://docs.bitfinex.com/v1/reference#rest-auth-account-info',
+            'ratelimit': 5,
+            'method': 'POST',
+            'authenticated': True,
+            'group': None
+        },
+    }
+
     def __init__(self, api_key, api_secret):
         self.api_key = api_key
         self.api_secret = api_secret
+
+    def account_infos(self):
+        """Return information about your account (trading fees)"""
+        data = {'request': self.endpoint('account_infos')}
+        return self.send_auth_request(data)
+
+    def account_fees(self):
+        """See the fees applied to your withdrawals"""
+        data = {'request': self.endpoint('account_fees')}
+        return self.send_auth_request(data)
 
     def cancel_offer(self, offer_id):
         """Cancel the offer."""
@@ -120,8 +148,16 @@ class BitfinexV1(object):
         """"Send a signed HTTP request"""
         url = self.api_url + data['request']
         headers = self.prepare_header(data)
-        # @todo: process API errors
-        return requests.post(url, headers=headers, timeout=self.timeout).json()
+        try:
+            res = requests.post(url, headers=headers, timeout=self.timeout)
+            if res.status_code != 200:
+                res = str(res.status_code) + ': ' + \
+                      (res.content.decode() if res.content else 'No error message provided')
+            else:
+                res = res.json()
+        except Exception as e:
+            res = getattr(e, 'message', repr(e))
+        return res
 
     def prepare_header(self, data):
         """Add data to header for authentication purpose"""
