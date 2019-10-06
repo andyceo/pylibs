@@ -133,10 +133,17 @@ def getenvars(variables=None):
         'test': 'sometest'
     }
 
+    defaults_flattened = _flatten_vars_dict(defaults, '', {})  # to get type that variable should have
+
     always_merger.merge(defaults, variables if variables else {})  # merge given dict with defaults
 
     variables = _flatten_vars_dict(defaults, '', {})
     for k in variables:
+
+        if k in defaults_flattened and defaults_flattened[k] is not None:
+            t = type(defaults_flattened[k])
+            variables[k] = t(variables[k])
+
         if k[-5:] == '_FILE' and variables[k]:
             substituted_k = k[:-5]
             if substituted_k not in variables or not variables[substituted_k]:
