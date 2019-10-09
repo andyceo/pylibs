@@ -9,6 +9,10 @@ import requests
 import time
 
 
+class ApiError(requests.exceptions.HTTPError):
+    pass
+
+
 class BitfinexV1(object):
     """Allow make queries to Bitfinex API v1 (stable). See https://docs.bitfinex.com/v1/docs"""
     api_key = ''
@@ -148,16 +152,12 @@ class BitfinexV1(object):
         """"Send a signed HTTP request"""
         url = self.api_url + data['request']
         headers = self.prepare_header(data)
-        try:
-            res = requests.post(url, headers=headers, timeout=self.timeout)
-            if res.status_code != 200:
-                res = str(res.status_code) + ': ' + \
-                      (res.content.decode() if res.content else 'No error message provided')
-            else:
-                res = res.json()
-        except Exception as e:
-            res = getattr(e, 'message', repr(e))
-        return res
+        response = requests.post(url, headers=headers, timeout=self.timeout)
+        result = response.json()
+        if response.status_code != 200:
+            result['status_code'] = response.status_code
+            raise ApiError(json.dumps(result))
+        return result
 
     def prepare_header(self, data):
         """Add data to header for authentication purpose"""
