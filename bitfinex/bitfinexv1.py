@@ -145,8 +145,12 @@ class BitfinexV1(object):
     def send_public_request(self, request, params=None):
         """Send an unsigned HTTP request"""
         url = self.api_url + request
-        # @todo: process API errors
-        return requests.get(url, timeout=self.timeout, params=params).json()
+        response = requests.get(url, timeout=self.timeout, params=params)
+        result = response.json()
+        if response.status_code != 200:
+            result['status_code'] = response.status_code
+            raise ApiError(json.dumps(result))
+        return result
 
     def send_auth_request(self, data):
         """"Send a signed HTTP request"""
