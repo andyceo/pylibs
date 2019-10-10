@@ -1,5 +1,6 @@
 import config
 import copy
+import os
 import unittest
 
 
@@ -50,6 +51,7 @@ class TestConfig(unittest.TestCase):
         expected_result2['INFLUXDB_PORT'] = 123
         expected_result2['TEST'] = 'another test'
         expected_result2['DELAY'] = 12
+        os.environ["DELAY"] = "12"
         evs = config.getenvars({
             'bitfinex': {
                 'api': {
@@ -60,6 +62,5 @@ class TestConfig(unittest.TestCase):
                 'port': 123
             },
             'test': 'another test',
-            'delay': '12',
         })
         self.assertEqual(evs, expected_result2)

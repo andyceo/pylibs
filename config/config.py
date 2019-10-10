@@ -18,6 +18,11 @@ def _flatten_vars_dict(d, previous_key, flattened_dict):
     else:
         pk = previous_key.upper()
         flattened_dict[pk] = os.environ.get(pk, d)
+
+        t = type(d)
+        if d is not None and flattened_dict[pk] != d and t in (str, int, float):
+            flattened_dict[pk] = t(flattened_dict[pk])
+
     return flattened_dict
 
 
@@ -133,23 +138,14 @@ def getenvars(variables=None):
         'test': 'sometest'
     }
 
-    defaults_flattened = _flatten_vars_dict(defaults, '', {})  # to get type that variable should have
-
     always_merger.merge(defaults, variables if variables else {})  # merge given dict with defaults
-
     variables = _flatten_vars_dict(defaults, '', {})
     for k in variables:
-
-        if k in defaults_flattened and defaults_flattened[k] is not None:
-            t = type(defaults_flattened[k])
-            variables[k] = t(variables[k])
-
         if k[-5:] == '_FILE' and variables[k]:
             substituted_k = k[:-5]
             if substituted_k not in variables or not variables[substituted_k]:
                 with open(variables[k]) as f:
                     variables[substituted_k] = f.read().strip(' \t\n\r')
-
     return variables
 
 
