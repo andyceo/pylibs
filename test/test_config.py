@@ -77,8 +77,6 @@ class TestConfig(unittest.TestCase):
         evs = config.getenvars(defaults)
         self.assertEqual(evs, expected_result3)
 
-        print()
-        print()
         expected_result4 = copy.deepcopy(expected_result3)
         another_content = 'ANOTHER_CONTENT!'
         expected_result4['BITFINEX_API_KEY'] = another_content
