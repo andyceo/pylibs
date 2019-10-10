@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+
+  nginx1:
+    image: nginx:stable-alpine
+    labels:
+      "com.docker.swarm.execron.exec": "nginx -s reload"
+      "com.docker.swarm.execron.interval": '1'
+      "com.docker.swarm.execron.webhook": "http://receiver:7080"
+
+      "com.docker.swarm.execron.1.exec": "nginx -s reopen"
+
+  nginx2:
+    image: nginx:stable-alpine
+    labels:
+      "com.docker.swarm.execron.1.exec": "nginx -s reload"
+      "com.docker.swarm.execron.1.interval": '1'
+      "com.docker.swarm.execron.1.webhook": "http://receiver:7080"
+
+      "com.docker.swarm.execron.2.exec": "nginx -s reopen"
+
+      "com.docker.swarm.execron.exec": "nginx -s reopen"
+
+  execron:
+    build: .
+    depends_on:
+      - nginx1
+      - nginx2
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
