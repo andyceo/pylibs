@@ -1,5 +1,8 @@
 environs
 deepmerge
+docker
 influxdb
 pymongo
+python-dateutil
 requests
+tabulate
