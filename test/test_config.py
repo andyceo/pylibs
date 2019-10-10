@@ -52,7 +52,7 @@ class TestConfig(unittest.TestCase):
         expected_result2['TEST'] = 'another test'
         expected_result2['DELAY'] = 12
         os.environ["DELAY"] = "12"
-        evs = config.getenvars({
+        defaults = {
             'bitfinex': {
                 'api': {
                     'key': 'somekey'
@@ -62,5 +62,27 @@ class TestConfig(unittest.TestCase):
                 'port': 123
             },
             'test': 'another test',
-        })
+        }
+        evs = config.getenvars(defaults)
         self.assertEqual(evs, expected_result2)
+
+        expected_result3 = copy.deepcopy(expected_result2)
+        filename = '/tmp/bfx_api_key_test'
+        filecontent = 'BITFINEX_API_KEY_FILE_TEST_CONTENT'
+        expected_result3['BITFINEX_API_KEY'] = filecontent
+        expected_result3['BITFINEX_API_KEY_FILE'] = filename
+        with open(filename, 'w') as f:
+            f.write(filecontent)
+            os.environ['BITFINEX_API_KEY_FILE'] = filename
+        evs = config.getenvars(defaults)
+        self.assertEqual(evs, expected_result3)
+
+        print()
+        print()
+        expected_result4 = copy.deepcopy(expected_result3)
+        another_content = 'ANOTHER_CONTENT!'
+        expected_result4['BITFINEX_API_KEY'] = another_content
+        os.environ['BITFINEX_API_KEY'] = another_content
+        evs = config.getenvars(defaults)
+        self.assertEqual(evs, expected_result4)
+        os.remove(filename)
