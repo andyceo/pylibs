@@ -20,7 +20,7 @@ class BitfinexV1(object):
     api_url = 'https://api.bitfinex.com'
     timeout = 5.0
 
-    # API endpoints metainformation. Ratelimits measured in request per minute
+    # API endpoints metainformation. Ratelimits measured in request per minute (req/min)
     metainfo = {
         'account_fees': {
             'doc_url': 'https://docs.bitfinex.com/v1/reference#rest-auth-fees',
@@ -36,6 +36,13 @@ class BitfinexV1(object):
             'authenticated': True,
             'group': None
         },
+        'pubticker': {
+            'doc_url': 'https://docs.bitfinex.com/v1/reference#rest-public-ticker',
+            'ratelimit': 20,
+            'method': 'GET',
+            'authenticated': False,
+            'group': None
+        }
     }
 
     def __init__(self, api_key, api_secret):

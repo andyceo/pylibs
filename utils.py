@@ -18,6 +18,10 @@ def message(msg):
     sys.stdout.flush()
 
 
+def timestamp2isodatestring(t):
+    return datetime.datetime.fromtimestamp(t).replace(microsecond=0).isoformat()
+
+
 def isodatestring2timestamp(s):
     struct_time = time.strptime(s, '%Y-%m-%dT%H:%M:%SZ')
     return int(calendar.timegm(struct_time))
