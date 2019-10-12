@@ -1,1 +1,1 @@
-from .bitfinexv1 import BitfinexV1
+from .bitfinexv1 import *

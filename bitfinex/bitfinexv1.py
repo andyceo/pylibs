@@ -13,6 +13,10 @@ class ApiError(requests.exceptions.HTTPError):
     pass
 
 
+class ApiErrorRateLimit(ApiError):
+    pass
+
+
 class BitfinexV1(object):
     """Allow make queries to Bitfinex API v1 (stable). See https://docs.bitfinex.com/v1/docs"""
     api_key = ''
@@ -153,20 +157,23 @@ class BitfinexV1(object):
         """Send an unsigned HTTP request"""
         url = self.api_url + request
         response = requests.get(url, timeout=self.timeout, params=params)
-        result = response.json()
-        if response.status_code != 200:
-            result['status_code'] = response.status_code
-            raise ApiError(json.dumps(result))
-        return result
+        return self._response_error_handling(response)
 
     def send_auth_request(self, data):
         """"Send a signed HTTP request"""
         url = self.api_url + data['request']
         headers = self.prepare_header(data)
         response = requests.post(url, headers=headers, timeout=self.timeout)
+        return self._response_error_handling(response)
+
+    @staticmethod
+    def _response_error_handling(response):
         result = response.json()
         if response.status_code != 200:
             result['status_code'] = response.status_code
+            if 'error' in result:
+                if result['error'] == 'ERR_RATE_LIMIT':
+                    raise ApiErrorRateLimit(json.dumps(result))
             raise ApiError(json.dumps(result))
         return result
 
