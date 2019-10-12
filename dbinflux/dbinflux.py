@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Provide some extra functions to work with InfluxDB."""
 import argparse
 import copy
 import os
@@ -9,12 +12,18 @@ from influxdb.exceptions import InfluxDBClientError, InfluxDBServerError
 
 def connect(config):
     """Connect to the InfluxDB"""
-    host = config['host'] if 'host' in config else 'localhost'
-    port = int(config['port']) if 'port' in config else 8086
-    timeout = int(config['timeout']) if 'timeout' in config else 5
-    username = config['username']
-    password = config['password']
-    database = config['database']
+    host = config['host'] if 'host' in config else \
+        config['INFLUXDB_HOST'] if 'INFLUXDB_HOST' in config else 'localhost'
+
+    port = int(config['port']) if 'port' in config else \
+        int(config['INFLUXDB_PORT']) if 'INFLUXDB_PORT' in config else 8086
+
+    timeout = int(config['timeout']) if 'timeout' in config else \
+        int(config['INFLUXDB_TIMEOUT']) if 'INFLUXDB_TIMEOUT' in config else 5
+
+    username = config['username'] if 'username' in config else config['INFLUXDB_USERNAME']
+    password = config['password'] if 'password' in config else config['INFLUXDB_PASSWORD']
+    database = config['database'] if 'database' in config else config['INFLUXDB_DATABASE']
     return InfluxDBClient(host=host, port=port, username=username, password=password, database=database,
                           timeout=timeout)
 
