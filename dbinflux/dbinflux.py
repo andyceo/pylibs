@@ -6,7 +6,6 @@ import copy
 import os
 import logging
 import time
-import utils
 from influxdb import InfluxDBClient
 from influxdb.exceptions import InfluxDBClientError, InfluxDBServerError
 
@@ -165,13 +164,15 @@ def timestamp_to_influxdb_format(timestamp=time.time()) -> int:
     return round(float(timestamp) * 1000000000)
 
 
-def write_points_with_exception_handling(client, points, time_precision=None):
+def write_points_with_exception_handling(client, points, time_precision=None, logger=None):
+    if not logger:
+        logger = logging.getLogger()
     try:
         return client.write_points(points, time_precision=time_precision)
-    except InfluxDBClientError as err:
-        utils.message('!Nothing saved as InfluxDB client error happens: {}'.format(err))
-    except InfluxDBServerError as err:
-        utils.message('!Nothing saved as InfluxDB server error happens: {}'.format(err))
+    except InfluxDBClientError as e:
+        logger.warning('Nothing saved as InfluxDB client error happens: %s', getattr(e, 'message', repr(e)))
+    except InfluxDBServerError as e:
+        logger.warning('Nothing saved as InfluxDB server error happens: %s', getattr(e, 'message', repr(e)))
 
 
 if __name__ == '__main__':
