@@ -4,6 +4,7 @@
 import argparse
 import copy
 import os
+import logging
 import time
 import utils
 from influxdb import InfluxDBClient
@@ -26,6 +27,32 @@ def connect(config):
     database = config['database'] if 'database' in config else config['INFLUXDB_DATABASE']
     return InfluxDBClient(host=host, port=port, username=username, password=password, database=database,
                           timeout=timeout)
+
+
+def dump_measurement_csv(client, measurement, chunk_size=500, logger=None, show_cli_cmd=False):
+    """Dump given measurement to csv file. Output is similar to:
+        influx -database '<DATABASE>' -username '<USERNAME>' -password '<PASSWORD>'
+            -execute 'SELECT * FROM <MEASUREMENT> LIMIT 2' -format csv > /tmp/measurement.csv
+    """
+    if not logger:
+        logging.basicConfig(level=logging.INFO)
+        logger = logging.getLogger()
+
+    query = "SELECT * FROM {}".format(measurement)
+
+    if show_cli_cmd:
+        logger.info("Execute following command in InfluxDB CLI to get same output faster:")
+        logger.info("influx -database '%s' -username '%s' -password '%s' -execute '%s LIMIT 2' -format csv > "
+                    "/tmp/%s.csv", client._database, client._username, client._password, query, measurement)
+    else:
+        logger.info("Dumping measurement '%s' started...", measurement)
+        logger.info("Start query '%s' with chunk size %d...", query, chunk_size)
+        t0 = time.time()
+        res = client.query(query, chunked=True, chunk_size=chunk_size)
+        t1 = time.time()
+        tdiff = t1-t0
+        logger.info('End query. Time: %ds (%dm)', tdiff, round(tdiff/60, 2))
+        # @todo: finish function (actually dump data)
 
 
 def batch_write_points(client, points, time_precision=None):
