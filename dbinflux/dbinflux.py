@@ -3,6 +3,7 @@
 """Provide some extra functions to work with InfluxDB."""
 import argparse
 import copy
+import csv
 import os
 import logging
 import time
@@ -29,10 +30,7 @@ def connect(config):
 
 
 def dump_measurement_csv(client, measurement, chunk_size=500, logger=None, show_cli_cmd=False):
-    """Dump given measurement to csv file. Output is similar to:
-        influx -database '<DATABASE>' -username '<USERNAME>' -password '<PASSWORD>'
-            -execute 'SELECT * FROM <MEASUREMENT> LIMIT 2' -format csv > /tmp/measurement.csv
-    """
+    """Dump given measurement to csv file"""
     if not logger:
         logging.basicConfig(level=logging.INFO)
         logger = logging.getLogger()
@@ -40,9 +38,27 @@ def dump_measurement_csv(client, measurement, chunk_size=500, logger=None, show_
     query = "SELECT * FROM {}".format(measurement)
 
     if show_cli_cmd:
-        logger.info("Execute following command in InfluxDB CLI to get same output faster:")
-        logger.info("influx -database '%s' -username '%s' -password '%s' -execute '%s LIMIT 2' -format csv > "
+        logger.info("0. Stop inserting in measurement '%s'", measurement)
+        logger.info("1. Execute following command in InfluxDB CLI to get same output faster:")
+        logger.info("    influx -database '%s' -username '%s' -password '%s' -execute '%s LIMIT 2' -format csv > "
                     "/tmp/%s.csv", client._database, client._username, client._password, query, measurement)
+        logger.info("2. Execute 1 once again and check files hashes, to be sure no new data was saved during export")
+        logger.info("   Also, you may want count points number with 'wc -l /tmp/%s.csv'", measurement)
+        logger.info("3. Then transform csv file '%s.csv' -> '%s.txt' (line protocol file) with csv2lp() function",
+                    measurement, measurement)
+        logger.info("   Also, do any data transformation you want, for example, type conversion, etc")
+        logger.info("4. Drop measurement: DROP MEASUREMENT %s", measurement)
+        logger.info("5. And last, import data back into InfluxDB:")
+        logger.info("    influx -username '%s' -password '%s' -import -pps 10000 -path=%s.txt",
+                    client._username, client._password, measurement)
+        logger.info("6. Check new measurement schema with:")
+        logger.info("    influx -database '%s' -username '%s' -password '%s' -execute 'SHOW FIELD KEYS FROM %s'",
+                    client._database, client._username, client._password, measurement)
+        logger.info("    influx -database '%s' -username '%s' -password '%s' -execute 'SHOW TAG KEYS FROM %s'",
+                    client._database, client._username, client._password, measurement)
+        logger.info("    influx -database '%s' -username '%s' -password '%s' "
+                    "-execute 'SHOW TAG VALUES FROM %s WITH KEY IN (...)'",
+                    client._database, client._username, client._password, measurement)
     else:
         logger.info("Dumping measurement '%s' started...", measurement)
         logger.info("Start query '%s' with chunk size %d...", query, chunk_size)
@@ -50,8 +66,42 @@ def dump_measurement_csv(client, measurement, chunk_size=500, logger=None, show_
         res = client.query(query, chunked=True, chunk_size=chunk_size)
         t1 = time.time()
         tdiff = t1-t0
-        logger.info('End query. Time: %ds (%dm)', tdiff, round(tdiff/60, 2))
-        # @todo: finish function (actually dump data)
+        logger.info('End query. Time: %ds (%.2fm)', tdiff, tdiff/60)
+        # @todo finish function (actually dump data)
+
+
+def csv2lp(csv_filepath, tags_keys=None, database=None, retention_policy=None):
+    """Transform given csv file into file protocol file. Run example:
+    csv2lp('/root/bitfinex_ticker.csv', ['symbol'], 'alfadirect', 'alfadirect')"""
+    tags_keys = tags_keys if tags_keys else []
+    path, filename = os.path.split(csv_filepath)
+    filename_wo_extension = os.path.splitext(os.path.basename(filename))[0]
+    lp_filepath = path + '/' + filename_wo_extension + '.txt'
+    with open(csv_filepath) as csvfile:
+        reader = csv.DictReader(csvfile)
+        with open(lp_filepath, 'w') as lp:
+
+            if database and retention_policy:
+                lp.write('# DML\n')
+                lp.write('# CONTEXT-DATABASE: {}\n'.format(database))
+                lp.write('# CONTEXT-RETENTION-POLICY: {}\n\n'.format(retention_policy))
+
+            for row in reader:
+                tag_set = []
+                for tag_key in tags_keys:
+                    tag_set.append('{}={}'.format(tag_key, row[tag_key]))
+                tag_set = ','.join(tag_set)
+
+                field_set = []
+                excludes = ['name', 'time'] + tags_keys
+                for field_key, field_value in row.items():
+                    if field_key not in excludes:
+                        field_set.append('{}={}'.format(field_key, field_value))
+                field_set = ','.join(field_set)
+
+                name = row['name']
+                time = row['time']
+                lp.write('{},{} {} {}\n'.format(name, tag_set, field_set, time))
 
 
 def batch_write_points(client, points, time_precision=None):
