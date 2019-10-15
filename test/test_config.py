@@ -39,6 +39,12 @@ class TestConfig(unittest.TestCase):
             'LOGGING_LEVEL': 20,
             'LOGGING_FORMAT': '[%(asctime)s] %(levelname)s [%(name)s.%(module)s.%(funcName)s:%(lineno)d] %(message)s',
             'LOGGING_DATEFMT': '%Y-%m-%d %H:%M:%S',
+            'MONGODB_HOST': 'mongodb',
+            'MONGODB_PORT': 27017,
+            'MONGODB_USERNAME': None,
+            'MONGODB_PASSWORD': None,
+            'MONGODB_PASSWORD_FILE': None,
+            'MONGODB_DATABASE': None,
             'DELAY': 30,
             'TEST': 'sometest'
         }
