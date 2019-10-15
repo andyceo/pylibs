@@ -11,8 +11,8 @@ from influxdb import InfluxDBClient
 from influxdb.exceptions import InfluxDBClientError, InfluxDBServerError
 
 
-def connect(config):
-    """Connect to the InfluxDB"""
+def connect(config) -> InfluxDBClient:
+    """Connect to the InfluxDB with given config"""
     host = config['host'] if 'host' in config else \
         config['INFLUXDB_HOST'] if 'INFLUXDB_HOST' in config else 'localhost'
 
