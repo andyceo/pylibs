@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Some common work for configuration through config file and environment variables."""
-
 import configparser
 import logging
 import os
@@ -124,6 +123,7 @@ def getenvars(variables=None):
                     'secret_file': None,
                 }
         },
+
         'influxdb': {
             'host': 'influxdb',
             'port': 8086,
@@ -141,6 +141,15 @@ def getenvars(variables=None):
             'datefmt': '%Y-%m-%d %H:%M:%S',
         },
 
+        'mongodb': {
+            'host': 'mongodb',
+            'port': 27017,
+            'username': None,
+            'password': None,
+            'password_file': None,
+            'database': None,
+        },
+
         'delay': 30,
 
         'test': 'sometest'
@@ -152,8 +161,3 @@ def getenvars(variables=None):
 
 # @TODO this is done for compatibility reasons, remove when update all projects that use it and leave only functions
 config = parse(True)
-
-
-if __name__ == '__main__':
-    a = {'users': None}
-    print(getenvars(a))
