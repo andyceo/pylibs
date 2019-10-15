@@ -1,21 +1,22 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Provide some extra functions to work with MongoDB via pymongo."""
 from pymongo import MongoClient
-from pylibs import config
-from pylibs import utils
+import utils
 
 
-def connect(section, collection=None):
-    """Connect to the mongo"""
-    host = config[section]['host']
-    port = int(config[section]['port'])
-    username = config[section]['username']
-    password = config[section]['password']
-    db = config[section]['database'] if config.has_option(section, 'database') else config[section]['db']
-    client = MongoClient("mongodb://{}:{}@{}:{}/{}".format(username, password, host, port, db))
+def connect(config) -> MongoClient:
+    """Connect to the MongoDB with given config"""
+    host = config['host'] if 'host' in config else \
+        config['MONGODB_HOST'] if 'MONGODB_HOST' in config else 'localhost'
 
-    if collection is None:
-        return client[db]
-    else:
-        return client[db][collection]
+    port = int(config['port']) if 'port' in config else \
+        int(config['MONGODB_PORT']) if 'MONGODB_PORT' in config else 27017
+
+    username = config['username'] if 'username' in config else config['MONGODB_USERNAME']
+    password = config['password'] if 'password' in config else config['MONGODB_PASSWORD']
+    database = config['database'] if 'database' in config else config['MONGODB_DATABASE']
+    return MongoClient("mongodb://{}:{}@{}:{}/{}".format(username, password, host, port, database))
 
 
 def excluded_fields(db, collection):
