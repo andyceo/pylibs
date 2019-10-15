@@ -77,14 +77,6 @@ def normalize_dict(dictionary):
     return d
 
 
-def bfxv1_private_balances(bfx):
-    balances = bfx.get_balances()
-    for balance in balances:
-        balance['amount'] = float(balance['amount'])
-        balance['available'] = float(balance['available'])
-    return balances
-
-
 def bfxv1_private_offers(bfx):
     offers = bfx.get_offers()
     return normalize_offers(offers)
