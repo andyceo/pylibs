@@ -46,7 +46,14 @@ class BitfinexV1(object):
             'method': 'GET',
             'authenticated': False,
             'group': None
-        }
+        },
+        'symbols': {
+            'doc_url': 'https://docs.bitfinex.com/v1/reference#rest-public-symbols',
+            'ratelimit': 10,
+            'method': 'GET',
+            'authenticated': False,
+            'group': None
+        },
     }
 
     def __init__(self, api_key, api_secret):
@@ -126,7 +133,7 @@ class BitfinexV1(object):
         return self.send_public_request(request, data)
 
     def get_symbols(self):
-        """Get a list of valid symbol IDs."""
+        """A list of symbol names."""
         request = self.endpoint('symbols')
         return self.send_public_request(request)
 
