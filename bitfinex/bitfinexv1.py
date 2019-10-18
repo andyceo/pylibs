@@ -40,6 +40,13 @@ class BitfinexV1(object):
             'authenticated': True,
             'group': None
         },
+        'book': {
+            'doc_url': 'https://docs.bitfinex.com/v1/reference#rest-public-orderbook',
+            'ratelimit': 30,
+            'method': 'GET',
+            'authenticated': False,
+            'group': None
+        },
         'pubticker': {
             'doc_url': 'https://docs.bitfinex.com/v1/reference#rest-public-ticker',
             'ratelimit': 20,
