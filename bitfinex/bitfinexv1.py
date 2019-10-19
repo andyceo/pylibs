@@ -24,56 +24,21 @@ class BitfinexV1(object):
     api_url = 'https://api.bitfinex.com'
     timeout = 5.0
 
-    # API endpoints metainformation. Ratelimits measured in request per minute (req/min)
-    metainfo = {
-        'account_fees': {
-            'doc_url': 'https://docs.bitfinex.com/v1/reference#rest-auth-fees',
-            'ratelimit': 5,
-            'method': 'POST',
-            'authenticated': True,
-            'group': None
-        },
-        'account_infos': {
-            'doc_url': 'https://docs.bitfinex.com/v1/reference#rest-auth-account-info',
-            'ratelimit': 5,
-            'method': 'POST',
-            'authenticated': True,
-            'group': None
-        },
-        'book': {
-            'doc_url': 'https://docs.bitfinex.com/v1/reference#rest-public-orderbook',
-            'ratelimit': 30,
-            'method': 'GET',
-            'authenticated': False,
-            'group': None
-        },
-        'pubticker': {
-            'doc_url': 'https://docs.bitfinex.com/v1/reference#rest-public-ticker',
-            'ratelimit': 20,
-            'method': 'GET',
-            'authenticated': False,
-            'group': None
-        },
-        'symbols': {
-            'doc_url': 'https://docs.bitfinex.com/v1/reference#rest-public-symbols',
-            'ratelimit': 10,
-            'method': 'GET',
-            'authenticated': False,
-            'group': None
-        },
-    }
-
     def __init__(self, api_key, api_secret):
         self.api_key = api_key
         self.api_secret = api_secret
 
     def account_infos(self):
-        """Return information about your account (trading fees)"""
+        """Return information about your account (trading fees) (POST, auth, rate limit: 5)
+            Documentation: https://docs.bitfinex.com/v1/reference#rest-auth-account-info
+        """
         data = {'request': self.endpoint('account_infos')}
         return self.send_auth_request(data)
 
     def account_fees(self):
-        """See the fees applied to your withdrawals"""
+        """See the fees applied to your withdrawals (POST, auth, rate limit: 5)
+            Documentation: https://docs.bitfinex.com/v1/reference#rest-auth-fees
+        """
         data = {'request': self.endpoint('account_fees')}
         return self.send_auth_request(data)
 
@@ -91,21 +56,25 @@ class BitfinexV1(object):
         return self.send_auth_request(data)
 
     def get_offers(self):
-        """View your active offers."""
+        """View your active offers (POST, auth, rate limit: unknown).
+            Documentation: https://docs.bitfinex.com/v1/reference#rest-auth-offers
+        """
         data = {'request': self.endpoint('offers')}
         return self.send_auth_request(data)
 
-    def get_offers_hist(self):
-        """View your active offers."""
-        # @todo: add support for limit param.
+    def get_offers_hist(self, limit=None):
+        """View your latest inactive offers. Limited to last 3 days and 1 request per minute
+        (POST, auth, rate limit: 1)
+        """
         data = {'request': self.endpoint('offers', 'hist')}
+        if limit:
+            data['limit'] = limit
         return self.send_auth_request(data)
 
     def get_history_movements(self, currency='usd', method='bitcoin', limit=500, since=None, until=None):
         """View your past deposits/withdrawals."""
-        request = self.endpoint('history', 'movements')
         data = {
-            'request': request,
+            'request': self.endpoint('history', 'movements'),
             'currency': currency,
             'method': method,
             'limit': limit
@@ -135,19 +104,24 @@ class BitfinexV1(object):
         return self.send_public_request(request, data)
 
     def get_orderbook(self, symbol='btcusd', data={}):
-        """Get the full order book."""
+        """Get the full order book (GET, no auth, rate limit: 30)
+            Documentation: https://docs.bitfinex.com/v1/reference#rest-public-orderbook
+        """
         request = self.endpoint('book', symbol)
         return self.send_public_request(request, data)
 
     def get_symbols(self):
-        """A list of symbol names."""
+        """A list of symbol names (GET, no auth, rate limit: 10)
+            Documentation: https://docs.bitfinex.com/v1/reference#rest-public-symbols
+        """
         request = self.endpoint('symbols')
         return self.send_public_request(request)
 
     def get_ticker(self, symbol='btcusd'):
         """
         Gives innermost bid and asks and information on the most recent trade, as
-        well as high, low and volume of the last 24 hours.
+        well as high, low and volume of the last 24 hours (GET, no auth, rate limit: 20)
+            Documentation: https://docs.bitfinex.com/v1/reference#rest-public-ticker
         """
         request = self.endpoint('pubticker', symbol)
         return self.send_public_request(request)
