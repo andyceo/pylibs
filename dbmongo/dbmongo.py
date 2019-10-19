@@ -19,21 +19,6 @@ def connect(config) -> MongoClient:
     return MongoClient("mongodb://{}:{}@{}:{}/{}".format(username, password, host, port, database))
 
 
-def excluded_fields(db, collection):
-    excluded_fields = {
-        'mongo-alfadirect': {
-            'bitfinex_balances': {
-                '_id': False,
-            },
-            'bitfinex_offers': {
-                '_id': False,
-                'changelog': False,
-            }
-        }
-    }
-    return excluded_fields[db][collection]
-
-
 def update_timestamps(collection, id_field_name='_id', timestamp_field_name='timestamp'):
     for document in collection.find({}):
         ts = utils.timestamp_normalize(document[timestamp_field_name])
