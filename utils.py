@@ -46,15 +46,6 @@ def timestamp_normalize(ts):
         return ts
 
 
-def normalize_offers(offers):
-    if 'message' in offers:
-        message('API Error: {}'.format(offers['message']))
-        exit(1)
-    for offer in offers:
-        offer['timestamp'] = timestamp_normalize(offer['timestamp'])
-    return offers
-
-
 def normalize_number(n):
     if type(n) is str:
         if n.find('.') == -1 and n.find('e') == -1:
@@ -75,16 +66,6 @@ def normalize_dict(dictionary):
     if 'price' in d:
         d['price'] = normalize_number(d['price'])
     return d
-
-
-def bfxv1_private_offers(bfx):
-    offers = bfx.get_offers()
-    return normalize_offers(offers)
-
-
-def bfxv1_private_offers_hist(bfx):
-    offers_hist = bfx.get_offers_hist()
-    return normalize_offers(offers_hist)
 
 
 def archive_directory(archive_filename, source_dir, mode='w:gz'):

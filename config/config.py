@@ -157,7 +157,3 @@ def getenvars(variables=None):
     always_merger.merge(defaults, variables if variables else {})  # merge given dict with defaults
     variables = _flatten_vars_dict(defaults, '', {})
     return variables
-
-
-# @TODO this is done for compatibility reasons, remove when update all projects that use it and leave only functions
-config = parse(True)
