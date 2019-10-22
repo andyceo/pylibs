@@ -74,7 +74,7 @@ def parse(defaults_as_section=False) -> dict:
         config_dict[section_lower] = {}
 
         for k, v in config.items(section):
-            if defaults_as_section and k in config_defaults:
+            if defaults_as_section and k in config_defaults and v == config_defaults[k]:
                 continue
 
             k_lower = k.lower()
