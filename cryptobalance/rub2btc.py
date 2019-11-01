@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """Show how many BTC you must send to recipient to allow him exchange that BTC to given russian ruble amount,
 with current exchange rates."""
-
 import argparse
 import os
 import requests
@@ -38,8 +37,10 @@ if __name__ == '__main__':
     parser.add_argument('amounts', metavar='N', type=int, nargs='+', help='Amounts to calculate')
     parser.add_argument('--fee', metavar='FEE', default=os.environ.get('FEE', 3), help='Fee, in percent')
     args = parser.parse_args()
-    c = 1-args.fee/100
+    fee_in_percents = float(args.fee)
+    print('Fee: {}%'.format(fee_in_percents))
+    c = 1-fee_in_percents/100
 
     for amount in args.amounts:
-        res = btcamount(amount, btcusdt, usdrub, args.fee)
+        res = btcamount(amount, btcusdt, usdrub, fee_in_percents)
         print('{} / {} / {} / {} = {}'.format(amount, btcusdt, usdrub, c, res))
