@@ -47,17 +47,17 @@ def run_webserver(bind_address='0.0.0.0', port=8080, logger=None):
         )
         logger = logging.getLogger()
 
-    logger.info('Starting httpd...\n')
+    logger.info('Starting httpd...')
     server_address = (bind_address, port)
     httpd = HTTPServer(server_address, WebServer)
-    logger.info('Running httpd...\n')
+    logger.info('Running httpd...')
     sys.stdout.flush()  # for printing log messages immediately
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
-        logger.info('Keyboard interrupt, finishing httpd...\n')
+        logger.info('Keyboard interrupt, finishing httpd...')
     httpd.server_close()
-    logger.info('httpd stopped.\n')
+    logger.info('httpd stopped.')
 
 
 if __name__ == '__main__':
