@@ -38,24 +38,27 @@ class WebServer(BaseHTTPRequestHandler):
         self._send_rsp()
 
 
-def run(bind_address='0.0.0.0', port=8080):
-    logging.basicConfig(
-        level=logging.INFO,
-        format="[%(asctime)s] %(levelname)s [%(name)s.%(module)s.%(funcName)s:%(lineno)d] %(message)s",
-        datefmt='%Y-%m-%d %H:%M:%S'
-    )
-    logging.info('Starting httpd...\n')
+def run_webserver(bind_address='0.0.0.0', port=8080, logger=None):
+    if not logger:
+        logging.basicConfig(
+            level=logging.INFO,
+            format="[%(asctime)s] %(levelname)s [%(name)s.%(module)s.%(funcName)s:%(lineno)d] %(message)s",
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
+        logger = logging.getLogger()
+
+    logger.info('Starting httpd...\n')
     server_address = (bind_address, port)
     httpd = HTTPServer(server_address, WebServer)
-    logging.info('Running httpd...\n')
+    logger.info('Running httpd...\n')
     sys.stdout.flush()  # for printing log messages immediately
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
-        logging.info('Keyboard interrupt, finishing httpd...\n')
+        logger.info('Keyboard interrupt, finishing httpd...\n')
     httpd.server_close()
-    logging.info('httpd stopped.\n')
+    logger.info('httpd stopped.\n')
 
 
 if __name__ == '__main__':
-    run()
+    run_webserver()
