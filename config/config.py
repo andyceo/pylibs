@@ -27,7 +27,8 @@ def _flatten_vars_dict(d, previous_key, flattened_dict):
         if pk[-5:] == '_FILE' and flattened_dict[pk]:
             substituted_k = pk[:-5]
             if substituted_k not in flattened_dict or substituted_k not in os.environ:
-                with open(flattened_dict[pk]) as f:
+                filename = os.environ.get(pk, flattened_dict[pk])
+                with open(filename) as f:
                     flattened_dict[substituted_k] = f.read().strip(' \t\n\r')
 
     return flattened_dict
