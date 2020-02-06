@@ -158,3 +158,13 @@ def getenvars(variables=None):
     always_merger.merge(defaults, variables if variables else {})  # merge given dict with defaults
     variables = _flatten_vars_dict(defaults, '', {})
     return variables
+
+
+def get_basic_logger(evs):
+    """Set logging module basic config and return default logger"""
+    logging.basicConfig(
+        level=evs['LOGGING_LEVEL'],
+        format=evs['LOGGING_FORMAT'],
+        datefmt=evs['LOGGING_DATEFMT']
+    )
+    return logging.getLogger()
