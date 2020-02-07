@@ -38,7 +38,8 @@ class WebServer(BaseHTTPRequestHandler):
         self._send_rsp()
 
 
-def run_webserver(bind_address='0.0.0.0', port=8080, logger=None):
+def run_webserver(bind_address='0.0.0.0', port=8080, logger=None,
+                  webserver_class='WebServer', webserver_class_module=__name__):
     if not logger:
         logging.basicConfig(
             level=logging.INFO,
@@ -49,7 +50,7 @@ def run_webserver(bind_address='0.0.0.0', port=8080, logger=None):
 
     logger.info('Starting httpd...')
     server_address = (bind_address, port)
-    httpd = HTTPServer(server_address, WebServer)
+    httpd = HTTPServer(server_address, getattr(sys.modules[webserver_class_module], webserver_class))
     logger.info('Running httpd...')
     sys.stdout.flush()  # for printing log messages immediately
     try:
