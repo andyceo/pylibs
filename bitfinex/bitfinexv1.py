@@ -71,6 +71,15 @@ class BitfinexV1(object):
             data['limit'] = limit
         return self.send_auth_request(data)
 
+    def get_orders_hist(self, limit=None):
+        """View your latest inactive orders. Limited to last 3 days and 1 request per minute
+        (POST, auth, rate limit: 1)
+        """
+        data = {'request': self.endpoint('orders', 'hist')}
+        if limit:
+            data['limit'] = limit
+        return self.send_auth_request(data)
+
     def get_history_movements(self, currency='usd', method='bitcoin', limit=500, since=None, until=None):
         """View your past deposits/withdrawals."""
         data = {
