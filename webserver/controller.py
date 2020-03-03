@@ -10,6 +10,17 @@ class Controller(object):
     def __init__(self, server):
         self.__server = server
 
+    def helloWorldExample(self):
+        """Example for Hello World controller"""
+        self.server.sendrsp(content='Hello world')
+
+    def helloWorldAlternativeExample(self):
+        """Alternative example for Hello World controller (manual control)"""
+        self.server.send_response(200)
+        self.server.send_header('Content-type', 'text/plain')
+        self.server.end_headers()
+        self.server.wfile.write()
+
     @property
     def server(self):
         return self.__server
