@@ -34,6 +34,9 @@ class WebServer(BaseHTTPRequestHandler):
 
         sys.stdout.flush()  # for printing log messages immediately
 
+    def sendrsp(self, code=200, headers=None, content='Hello World!', encoding='utf8'):
+        self._send_rsp(code=code, headers=headers, content=content, encoding=encoding)
+
     def do_GET(self):
         self._send_rsp()
 
