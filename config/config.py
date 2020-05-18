@@ -6,6 +6,7 @@ import logging
 import os
 import sys
 from deepmerge import always_merger
+from singleton import Singleton
 
 
 def _flatten_vars_dict(d, previous_key, flattened_dict):
@@ -171,3 +172,27 @@ def get_basic_logger(evs):
         datefmt=evs['LOGGING_DATEFMT']
     )
     return logging.getLogger()
+
+
+class ConfigHelper(metaclass=Singleton):
+    """This is helper singleton class that aimed to help include parsed config in other app parts and modules"""
+    _evs = None
+    _logger = None
+
+    def __init__(self):
+        self._logger.info('Singleton instance of {} class initialized!'.format(self.__class__.__name__))
+
+    def get_evs(self, default_envars_function=None):
+        """Return current parsed environment variables"""
+        if self._evs is None:
+            if default_envars_function is None:
+                self._evs = getenvars(parse(True))
+            else:
+                self._evs = getenvars(default_envars_function(parse(True)))
+        return self._evs
+
+    def get_logger(self, logger_name=''):
+        """Return default logger if logger_name not passed"""
+        if self._logger is None:
+            self._logger = get_basic_logger(self._evs)
+        return self._logger if not logger_name else logging.getLogger(logger_name)
