@@ -180,6 +180,15 @@ class ConfigHelper(metaclass=Singleton):
     _logger = None
 
     def __init__(self):
+        # the following is the fix for the case when no logger exists when creating instance of this class
+        # this happens when this class instance creates very first
+        # @todo maybe rewrite to setter/getter pattern for evs, logger?
+        # @see https://stackoverflow.com/questions/2627002/whats-the-pythonic-way-to-use-getters-and-setters
+        # @see https://www.python-course.eu/python3_properties.php
+        # @see https://www.geeksforgeeks.org/getter-and-setter-in-python/
+        self.get_evs()
+        self.get_logger()
+
         self._logger.info('Singleton instance of {} class initialized!'.format(self.__class__.__name__))
 
     def get_evs(self, default_envars_function=None):
