@@ -33,7 +33,8 @@ def _flatten_vars_dict(d, previous_key, flattened_dict):
                     with open(filename) as f:
                         flattened_dict[substituted_k] = f.read().strip(' \t\n\r')
                 except EnvironmentError:
-                    logging.getLogger().error('File {} can not be open! It may cause further errors!'.format(filename))
+                    logging.getLogger().warning(
+                        'File {} can not be open! It may cause further errors!'.format(filename))
 
     return flattened_dict
 
@@ -97,7 +98,7 @@ def parse(defaults_as_section=False) -> dict:
                         with open(config[section][k], 'r') as file:
                             config_dict[section_lower][k_before_file.lower()] = file.read().strip(' \t\n\r')
                     except EnvironmentError:
-                        logging.getLogger().error(
+                        logging.getLogger().warning(
                             'File {} can not be open! It may cause further errors!'.format(config[section][k]))
 
     if defaults_as_section:
