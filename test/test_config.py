@@ -12,13 +12,17 @@ class TestConfig(unittest.TestCase):
             'INFLUXDB_PORT': 123,
             'INFLUXDB__USERNAME': 'someuser',
         }
-
         expected_result = {
             'host': 'localhost',
             'port': 123,
             '_username': 'someuser',
         }
+        res = config.group_envars(evs, 'influxdb')
+        self.assertEqual(res, expected_result)
 
+        # Add case with single underscore
+        evs['INFLUXDB_USER'] = 'anotheruser'
+        expected_result['user'] = 'anotheruser'
         res = config.group_envars(evs, 'influxdb')
         self.assertEqual(res, expected_result)
 
@@ -90,3 +94,5 @@ class TestConfig(unittest.TestCase):
         evs = config.getenvars(defaults)
         self.assertEqual(evs, expected_result4)
         os.remove(filename)
+
+    # @todo: Add testcase for parse() function

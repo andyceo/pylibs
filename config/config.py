@@ -93,8 +93,12 @@ def parse(defaults_as_section=False) -> dict:
                     v_before_file = None
 
                 if _environ_lookup(section, k_before_file, v_before_file, config_dict) is None:
-                    with open(config[section][k], 'r') as file:
-                        config_dict[section_lower][k_before_file.lower()] = file.read().strip(' \t\n\r')
+                    try:
+                        with open(config[section][k], 'r') as file:
+                            config_dict[section_lower][k_before_file.lower()] = file.read().strip(' \t\n\r')
+                    except EnvironmentError:
+                        logging.getLogger().error(
+                            'File {} can not be open! It may cause further errors!'.format(config[section][k]))
 
     if defaults_as_section:
         config_dict['DEFAULT'] = {}
