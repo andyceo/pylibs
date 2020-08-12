@@ -3,6 +3,7 @@ python:
   - 3.6
   - 3.7
 script:
+  - python -m unittest test.test_bitfinex
   - python -m unittest test.test_config
   - python -m unittest test.test_dbinflux
   - python -m unittest test.test_docker_utils
