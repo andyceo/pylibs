@@ -23,3 +23,13 @@ class BitfinexHelper:
         else:
             raise ValueError('Unknown timeframe {}! Exiting...'.format(tf))
         return tfd
+
+    @staticmethod
+    def candle_indexes():
+        """Return indexes for candle list.
+        @see https://docs.bitfinex.com/reference#rest-public-candles"""
+        return ['MTS', 'OPEN', 'CLOSE', 'HIGH', 'LOW', 'VOLUME']
+
+    @staticmethod
+    def candle2dict(candle):
+        return dict(zip(BitfinexHelper.candle_indexes(), candle))
