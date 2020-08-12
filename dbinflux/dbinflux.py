@@ -114,9 +114,8 @@ def batch_write_points(client, points, time_precision=None):
 
 
 def move_points(source, dest):
-    """
-    This function helps transfer points from one database (and/or measurement) to another one. Here is the demo script
-    using that function:
+    """This function helps transfer points from one database (and/or measurement) to another one. Here is the demo
+    script using that function:
 
 
     import pylibs
@@ -204,8 +203,7 @@ def argparse_add_influxdb_options(parser: argparse.ArgumentParser):
 
 
 def timestamp_to_influxdb_format(timestamp=time.time()) -> int:
-    """
-    Convert timestamp to integer of InfluxDB format.
+    """Convert timestamp to integer of InfluxDB format.
 
     :param timestamp: Datetime in timestamp format (number of seconds that elapsed since
         00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970. Can be string, int or float
@@ -223,6 +221,11 @@ def write_points_with_exception_handling(client, points, time_precision=None, lo
         logger.warning('Nothing saved as InfluxDB client error happens: %s', getattr(e, 'message', repr(e)))
     except InfluxDBServerError as e:
         logger.warning('Nothing saved as InfluxDB server error happens: %s', getattr(e, 'message', repr(e)))
+
+
+def get_measurements(client, database: str) -> list:
+    """Return the list of measurements in given database"""
+    return [m['name'] for m in client.query('SHOW MEASUREMENTS ON {}'.format(database)).get_points()]
 
 
 if __name__ == '__main__':
