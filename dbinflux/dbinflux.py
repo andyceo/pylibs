@@ -223,9 +223,41 @@ def write_points_with_exception_handling(client, points, time_precision=None, lo
         logger.warning('Nothing saved as InfluxDB server error happens: %s', getattr(e, 'message', repr(e)))
 
 
-def get_measurements(client, database: str) -> list:
+def get_measurements(client: InfluxDBClient, database='') -> list:
     """Return the list of measurements in given database"""
-    return [m['name'] for m in client.query('SHOW MEASUREMENTS ON {}'.format(database)).get_points()]
+    query = 'SHOW MEASUREMENTS'
+    query += ' ON {}'.format(database) if database else ''
+    return [m['name'] for m in client.query(query).get_points()]
+
+
+def get_fields_keys(client: InfluxDBClient, database='', measurement='') -> dict:
+    """Return the dictionary of field keys, where key is field name and value is field type, for given database and
+    measurement"""
+    query = 'SHOW FIELD KEYS'
+    query += ' ON "{}"'.format(database) if database else ''
+    query += ' FROM "{}"'.format(measurement) if measurement else ''
+    return {_['fieldKey']: _['fieldType'] for _ in client.query(query).get_points()}
+
+
+def get_tag_keys(client: InfluxDBClient, database='', measurement='') -> list:
+    """Return the list of tag keys in given database and measurement"""
+    query = 'SHOW TAG KEYS'
+    query += ' ON "{}"'.format(database) if database else ''
+    query += ' FROM "{}"'.format(measurement) if measurement else ''
+    return [_['tagKey'] for _ in client.query(query).get_points()]
+
+
+def get_tags(client: InfluxDBClient, database='', measurement='') -> dict:
+    """Return the dictionary of tag keys, where key is tag name and value is a list of tag values, for given database
+    and measurement"""
+    tags = {}
+    for tag in get_tag_keys(client, database, measurement):
+        query = 'SHOW TAG VALUES'
+        query += ' ON "{}"'.format(database) if database else ''
+        query += ' FROM "{}"'.format(measurement) if measurement else ''
+        query += ' WITH KEY = "{}"'.format(tag)
+        tags[tag] = [_['value'] for _ in client.query(query).get_points()]
+    return tags
 
 
 if __name__ == '__main__':
