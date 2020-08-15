@@ -226,8 +226,16 @@ def write_points_with_exception_handling(client, points, time_precision=None, lo
 def get_measurements(client: InfluxDBClient, database='') -> list:
     """Return the list of measurements in given database"""
     query = 'SHOW MEASUREMENTS'
-    query += ' ON {}'.format(database) if database else ''
-    return [m['name'] for m in client.query(query).get_points()]
+    query += ' ON "{}"'.format(database) if database else ''
+    return [_['name'] for _ in client.query(query).get_points()]
+
+
+def get_series(client: InfluxDBClient, database='', measurement='') -> list:
+    """Return the list of series in given database and measurement"""
+    query = 'SHOW SERIES'
+    query += ' ON "{}"'.format(database) if database else ''
+    query += ' FROM "{}"'.format(measurement) if measurement else ''
+    return [_['key'] for _ in client.query(query).get_points()]
 
 
 def get_fields_keys(client: InfluxDBClient, database='', measurement='') -> dict:
