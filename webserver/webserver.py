@@ -2,16 +2,24 @@
 # -*- coding: utf-8 -*-
 """Implements basic web server with some default GET requests handling and logging"""
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import datetime
 import json
 import logging
 import sys
 
 
 class WebServer(BaseHTTPRequestHandler):
-    def _send_rsp(self, code=200, headers=None, content='Hello World!', encoding='utf8'):
+    def _send_rsp(self, code=200, headers=None, content='Hello World!', encoding='utf8', start_ts=0):
         # Calculate content and Content-type header
         cth = ('Content-type', 'text/plain')
         if isinstance(content, (dict, set, list, tuple)):
+            if start_ts:  # Add request timing info if start_ts not zero
+                content['request_timing'] = {
+                    'received_timestamp': start_ts,
+                    'received_date': datetime.datetime.fromtimestamp(start_ts, tz=datetime.timezone.utc).replace(
+                        microsecond=0).isoformat(),
+                    'executed_time': datetime.datetime.now().timestamp() - start_ts,
+                }
             content = json.dumps(content, sort_keys=True, indent=4)
             cth = ('Content-type', 'application/json')
         elif not isinstance(content, str):
@@ -34,10 +42,12 @@ class WebServer(BaseHTTPRequestHandler):
 
         sys.stdout.flush()  # for printing log messages immediately
 
-    def sendrsp(self, code=200, headers=None, content='Hello World!', encoding='utf8'):
-        self._send_rsp(code=code, headers=headers, content=content, encoding=encoding)
+    def sendrsp(self, code=200, headers=None, content='Hello World!', encoding='utf8', start_ts=0):
+        """Send response to client"""
+        self._send_rsp(code=code, headers=headers, content=content, encoding=encoding, start_ts=start_ts)
 
     def do_GET(self):
+        """Default handler for all GET requests"""
         self._send_rsp()
 
 
