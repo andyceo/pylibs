@@ -1,9 +1,24 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Bitfinex helper class (contain useful static methods)"""
+"""Bitfinex helper class (contain useful static methods and documentation)"""
 
 
 class BitfinexHelper:
+    apiv2_description = {
+        'rpe_candles': {
+            'group': 'RPE',
+            'method': 'GET',
+            'endpoint': 'https://api-pub.bitfinex.com/v2/candles/trade:TimeFrame:Symbol/Section',
+        }
+    }
+    """Structured Bitfinex API endpoints description based on https://docs.bitfinex.com/reference"""
+
+    apiv2_groups = {
+        'RPE': 'REST Public Endpoints',
+        'RCE': 'REST Calculation Endpoints',
+    }
+    """Groups of Bitfinex API endpoints"""
+
     @staticmethod
     def tfs():
         """Return list of possible timeframes"""
