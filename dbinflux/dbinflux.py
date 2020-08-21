@@ -14,7 +14,7 @@ from influxdb.exceptions import InfluxDBClientError, InfluxDBServerError
 def connect(config: dict) -> InfluxDBClient:
     """Connect to the InfluxDB with given config
 
-    :param config: Dictionary in format:
+    :param config: Dictionary (or object with dictionary interface) in format:
 
         {'host': 'localhost', 'port': 8086, 'timeout': 5, 'username': 'username', 'password': 'password',
             'database': 'database'}
@@ -278,6 +278,54 @@ def get_tags(client: InfluxDBClient, database='', measurement='') -> dict:
         query += ' WITH KEY = "{}"'.format(tag)
         tags[tag] = [_['value'] for _ in client.query(query).get_points()]
     return tags
+
+
+def compare_point_with_db(client: InfluxDBClient, measurement: str, tag_set: dict, ts: int, point: dict) -> dict:
+    """Get the point from InfluxDB for given measurement, tag set and timestamp, and compare results from InfluxDB
+    with given point. Return comparison stats.
+
+    @see https://docs.influxdata.com/influxdb/v1.8/troubleshooting/frequently-asked-questions/#how-does-influxdb-handle-duplicate-points
+    """
+    query = 'SELECT * FROM "{}" WHERE time = {}'.format(measurement, ts)  # query part for measurement and timestamp
+    for tag_name, v in tag_set.items():  # query part for tag set
+        query += ' AND "{}" = '.format(tag_name) + ("{}".format(v) if isinstance(v, int) else "'{}'".format(v))
+    row = [v for v in client.query(query).get_points()]
+
+    # result dictionary blank
+    result = {
+        'query': query,
+        'query_results_count': len(row),
+        'fields_not_in_db': {},
+        'fields_not_equal': {},
+        'result': False
+    }
+
+    if result['query_results_count'] != 1:
+        return result
+
+    # Clean found point from time and tag set dictionary keys
+    row = row[0]
+    del row['time']
+    for tag_name, _ in tag_set.items():
+        del row[tag_name]
+
+    # Compare fields from found point and given point
+    fields_not_in_db = {}
+    fields_not_equal = {}
+    for field_name, v in point.items():
+        if field_name in row:
+            if row[field_name] == v:
+                del row[field_name]
+            else:
+                fields_not_equal[field_name] = v
+        else:
+            fields_not_in_db[field_name] = v
+
+    result['fields_not_in_db'] = fields_not_in_db
+    result['fields_not_equal'] = fields_not_equal
+    result['result'] = not fields_not_equal and not fields_not_in_db
+
+    return result
 
 
 if __name__ == '__main__':
