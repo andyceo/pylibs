@@ -11,8 +11,19 @@ from influxdb import InfluxDBClient
 from influxdb.exceptions import InfluxDBClientError, InfluxDBServerError
 
 
-def connect(config) -> InfluxDBClient:
-    """Connect to the InfluxDB with given config"""
+def connect(config: dict) -> InfluxDBClient:
+    """Connect to the InfluxDB with given config
+
+    :param config: Dictionary in format:
+
+        {'host': 'localhost', 'port': 8086, 'timeout': 5, 'username': 'username', 'password': 'password',
+            'database': 'database'}
+
+        or in format:
+
+        {'INFLUXDB_HOST': 'localhost', 'INFLUXDB_PORT': 8086, 'INFLUXDB_TIMEOUT': 5, 'INFLUXDB_USERNAME': 'username',
+            'INFLUXDB_PASSWORD': 'password', 'INFLUXDB_DATABASE': 'database'}
+    """
     host = config['host'] if 'host' in config else \
         config['INFLUXDB_HOST'] if 'INFLUXDB_HOST' in config else 'localhost'
 
@@ -203,13 +214,14 @@ def argparse_add_influxdb_options(parser: argparse.ArgumentParser):
 
 
 def timestamp_to_influxdb_format(timestamp=time.time()) -> int:
-    """Convert timestamp to integer of InfluxDB format.
+    """Convert given timestamp (number of seconds) to integer of InfluxDB format (number of nanoseconds).
+    @todo: see __main__ section test: fix them
 
     :param timestamp: Datetime in timestamp format (number of seconds that elapsed since
         00:00:00 Coordinated Universal Time (UTC), Thursday, 1 January 1970. Can be string, int or float
     :return: Integer that ready to use in influxdb.client.write_points() function without precision parameter
     """
-    return round(float(timestamp) * 1000000000)
+    return round(float(timestamp) * 1_000_000_000)
 
 
 def write_points_with_exception_handling(client, points, time_precision=None, logger=None):
