@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Bitfinex helper class (contain useful static methods and documentation)"""
+from historical import Timeframe
 
 
 class BitfinexHelper:
@@ -26,18 +27,8 @@ class BitfinexHelper:
 
     @staticmethod
     def tfd(tf: str) -> int:
-        """Calculate and return the timeframe duration in seconds. Unstable for monthes"""
-        if 'm' in tf:
-            tfd = int(tf.replace('m', '')) * 60
-        elif 'h' in tf:
-            tfd = int(tf.replace('h', '')) * 60 * 60
-        elif 'D' in tf:
-            tfd = int(tf.replace('D', '')) * 60 * 60 * 24
-        elif 'M' in tf:
-            tfd = int(tf.replace('M', '')) * 60 * 60 * 24 * 30
-        else:
-            raise ValueError('Unknown timeframe {}! Exiting...'.format(tf))
-        return tfd
+        # @todo: refactor using tfd method
+        return Timeframe.duration(tf)
 
     @staticmethod
     def candle_indexes():
