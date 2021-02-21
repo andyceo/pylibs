@@ -2,9 +2,12 @@ language: python
 python:
   - 3.6
   - 3.7
+  - 3.8
+  - 3.9
 script:
   - python -m unittest test.test_bitfinex
   - python -m unittest test.test_config
   - python -m unittest test.test_dbinflux
   - python -m unittest test.test_docker_utils
+  - python -m unittest test.test_historical
   - python -m unittest test.test_timefuncs

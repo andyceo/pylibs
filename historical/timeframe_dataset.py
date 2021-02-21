@@ -1,0 +1,144 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""This module contain class HistoryDataset representing history data"""
+import time
+from historical import Timeframe
+from timefuncs import gmtdt
+
+
+class HistoricalDatasetError(Exception):
+    pass
+
+
+class WrongTimestampUnit(Exception):
+    pass
+
+
+class TimeframeDataset:
+    """Class for work with history data. Provide handy functions to work with history dataset"""
+
+    @property
+    def data(self):
+        return self.__data
+
+    @data.setter
+    def data(self, data):
+        self.__data = data
+
+    @property
+    def columns(self):
+        return self.__columns
+
+    @columns.setter
+    def columns(self, columns):
+        self.__columns = columns
+
+    @property
+    def tsname(self):
+        return self.__tsname
+
+    @tsname.setter
+    def tsname(self, tsname):
+        self.__tsname = tsname
+        self.__tsindex = self.columns.index(tsname)
+
+    @property
+    def tsindex(self):
+        return self.__tsindex
+
+    @property
+    def tscoef(self):
+        return self.__tscoef
+
+    @property
+    def tsunit(self):
+        return self.__tsunit
+
+    @tsunit.setter
+    def tsunit(self, tsunit):
+        self.__tsunit = tsunit
+        self.__tscoef = TimeframeDataset.timestamp_coefficient(tsunit)
+
+    @property
+    def timeframe(self):
+        return self.__timeframe
+
+    @timeframe.setter
+    def timeframe(self, timeframe):
+        self.__timeframe = timeframe
+
+    def __init__(self, data: list, columns: list, tsname: str, timeframe: str, tsunit='s'):
+        """data: list of lists or tuples; column_names: list of strings with column names"""
+        if not TimeframeDataset.is_data_ok(data, columns, tsname):
+            raise HistoricalDatasetError("Given data is not ok!")
+        self.data = data
+        self.columns = columns
+        self.tsname = tsname
+        self.timeframe = Timeframe(timeframe)
+        self.tsunit = tsunit
+
+    def get_dict(self, index=-1) -> dict:
+        """Return dictionary with data from given index"""
+        return {column: self.data[index][idx] for idx, column in enumerate(self.columns)}
+
+    def get_timestamp(self, index=-1) -> int:
+        """Return the timestamp from given index"""
+        return int(self.data[index][self.tsindex] * self.tscoef)
+
+    @staticmethod
+    def is_data_ok(data: list, columns: list, tsname: str) -> bool:
+        """Check given data is ok to be HistoricalDataset"""
+        columns_len = len(columns)
+        tsindex = columns.index(tsname)
+        tsvalue = 0
+        res = True
+        for item in data:
+            res = res and (isinstance(item, list) or isinstance(item, tuple))  # check all data items are lists (tuples)
+            res = res and (columns_len == len(item))  # check length for columns and each item
+            res = res and (tsvalue < item[tsindex])  # check data is sorted by timestamp
+            if not res:
+                break
+        return res
+
+    @staticmethod
+    def timestamp_coefficient(tsunit: str) -> float:
+        coefs = {'s': 1, 'ms': 0.001}
+        if tsunit not in coefs:
+            raise WrongTimestampUnit("Timestamp unit is wrong or unknown!")
+        return coefs[tsunit]
+
+    def is_ok(self):
+        """Same as TimeframeDataset.is_data_ok() but not static"""
+        return TimeframeDataset.is_data_ok(self.data, self.columns, self.tsname)
+
+    def is_inside(self, timestamp=time.time(), index=-1):
+        """Chek given timestamp is inside given index"""
+        return self.data[index][self.tsindex] * self.tscoef <= timestamp < self.data[index][self.tsindex] * self.tscoef + self.timeframe.duration
+
+    def is_last_closed(self):
+        timestamp = time.time()
+        last_timestamp = self.get_timestamp()
+        tfduration = self.timeframe.duration
+        return timestamp >= last_timestamp + tfduration
+
+    def summary(self):
+        """Return string with readable summary of TimeframeDataset. Usage: print(ds.summary())"""
+        res = []
+        cts = time.time()
+        res.append('Summary for TimeframeDataset:')
+        res.append('Current timestamp: {} (UTC {})'.format(cts, gmtdt(cts)))
+        res.append('Dataset length: {}'.format(len(self.data)))
+        res.append('Dataset is ok: {}'.format(self.is_ok()))
+        res.append('Dataset columns: {}'.format(self.columns))
+        res.append('Dataset timestamp column: {}'.format(self.tsname))
+        res.append('Dataset timestamp column index: {}'.format(self.tsindex))
+        res.append('First timestamp: {} (UTC {})'.format(self.get_timestamp(0), gmtdt(self.get_timestamp(0))))
+        res.append('First item: {}'.format(self.data[0]))
+        res.append('Last timestamp: {} (UTC {})'.format(self.get_timestamp(-1), gmtdt(self.get_timestamp(-1))))
+        res.append('Last item: {}'.format(self.data[-1]))
+        res.append('Timeframe: {}'.format(self.timeframe.timeframe))
+        res.append('Timeframe duration, in seconds: {}'.format(self.timeframe.duration))
+        res.append('Timestamp units: {}'.format(self.tsunit))
+        res.append('Timestamp coefficient: {}'.format(self.tscoef))
+        res.append('Last item is closed: {}'.format(self.is_last_closed()))
+        return '\n'.join(res)
