@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 """This module contain class HistoryDataset representing history data"""
 import time
-from historical import Timeframe
+from timeframeds import Timeframe
 from timefuncs import gmtdt
 
 
-class HistoricalDatasetError(Exception):
+class TimeframeDatasetError(Exception):
     pass
 
 
@@ -70,7 +70,7 @@ class TimeframeDataset:
     def __init__(self, data: list, columns: list, tsname: str, timeframe: str, tsunit='s'):
         """data: list of lists or tuples; column_names: list of strings with column names"""
         if not TimeframeDataset.is_data_ok(data, columns, tsname):
-            raise HistoricalDatasetError("Given data is not ok!")
+            raise TimeframeDatasetError("Given data is not ok!")
         self.data = data
         self.columns = columns
         self.tsname = tsname
@@ -87,7 +87,7 @@ class TimeframeDataset:
 
     @staticmethod
     def is_data_ok(data: list, columns: list, tsname: str) -> bool:
-        """Check given data is ok to be HistoricalDataset"""
+        """Check given data is ok to be TimeframeDataset"""
         columns_len = len(columns)
         tsindex = columns.index(tsname)
         tsvalue = 0

@@ -1,9 +1,9 @@
 import unittest
-from historical import Timeframe, TimeframeError, TIMEFRAMES
-from historical import TimeframeDataset
+from timeframeds import Timeframe, TimeframeError, TIMEFRAMES
+from timeframeds import TimeframeDataset
 
 
-class TestHistorical(unittest.TestCase):
+class TestTimeframeds(unittest.TestCase):
     def test_timeframe(self):
         expected_results = [60, 300, 900, 1800, 3600, 10800, 21600, 43200, 86400, 604800, 1209600, 2592000]
         len_timeframes = len(TIMEFRAMES)

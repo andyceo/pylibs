@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Bitfinex helper class (contain useful static methods and documentation)"""
-from historical import Timeframe
+from timeframeds import Timeframe
 
 
 class BitfinexHelper:
