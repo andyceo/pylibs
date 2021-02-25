@@ -25,7 +25,7 @@ class TestTimeframeds(unittest.TestCase):
                          "Timeframe.duration calculate error during timeframe creation")
 
     def test_timeframe_dataset(self):
-        # Test TimeframeDataset creation
+        # Define test vector
         data = [
             [1401580800000, 627.01, 640.79, 685, 522.15, 354190.51030868],
             [1404172800000, 642.26, 580, 665, 561.47, 158002.70311825],
@@ -39,6 +39,13 @@ class TestTimeframeds(unittest.TestCase):
         tsunit = 'ms'
         tscoef = 0.001
         tsindex = columns.index(tsname)
+
+        # Test creation of empty TimeframeDataset
+        ds = TimeframeDataset(data=[], columns=columns, tsname=tsname, timeframe=timeframe, tsunit=tsunit)
+        self.assertIsInstance(ds, TimeframeDataset, "Empty TimeframeDataset was not created properly")
+        self.assertEqual(ds.data, [])
+
+        # Test TimeframeDataset creation
         ds = TimeframeDataset(data=data, columns=columns, tsname=tsname, timeframe=timeframe, tsunit=tsunit)
         self.assertIsInstance(ds, TimeframeDataset, "TimeframeDataset was not created properly")
         self.assertEqual(ds.data, data)
