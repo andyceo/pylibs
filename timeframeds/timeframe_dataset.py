@@ -81,6 +81,16 @@ class TimeframeDataset:
         """Return dictionary with data from given index"""
         return {column: self.data[index][idx] for idx, column in enumerate(self.columns)}
 
+    def dict2list(self, d):
+        """Return correct list that can be attached to self.data. This function is reverse to self.get_dict()"""
+        lst = []
+        for column in self.columns:
+            if column in d:
+                lst.append(d[column])
+            else:
+                raise TimeframeDatasetError("Given dictionary has no {} key!".format(column))
+        return lst
+
     def get_timestamp(self, index=-1) -> int:
         """Return the timestamp from given index"""
         return int(self.data[index][self.tsindex] * self.tscoef)

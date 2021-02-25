@@ -57,7 +57,7 @@ class TestTimeframeds(unittest.TestCase):
         self.assertTrue(TimeframeDataset.is_data_ok(data, columns, tsname))
         self.assertTrue(ds.is_ok())
 
-        # Test TimeframeDataset.get_dict() and .get_timestamp() methods
+        # Test TimeframeDataset.get_dict(), dict2list and .get_timestamp() methods
         for index in [2, 4, -1]:
             expected = int(data[index][columns.index(tsname)] * tscoef)
             result = ds.get_timestamp(index)
@@ -66,6 +66,9 @@ class TestTimeframeds(unittest.TestCase):
             expected = {column: data[index][idx] for idx, column in enumerate(columns)}
             result = ds.get_dict(index)
             self.assertEqual(result, expected)
+
+            result = ds.dict2list(expected)
+            self.assertEqual(result, data[index])
 
         self.assertEqual(ds.get_dict(), expected)
 
