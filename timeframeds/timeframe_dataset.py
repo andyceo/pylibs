@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """This module contain class HistoryDataset representing history data"""
+import collections
 import time
 from timeframeds import Timeframe
 from timefuncs import gmtdt
@@ -14,16 +15,8 @@ class WrongTimestampUnit(Exception):
     pass
 
 
-class TimeframeDataset:
+class TimeframeDataset(collections.UserList):
     """Class for work with history data. Provide handy functions to work with history dataset"""
-
-    @property
-    def data(self):
-        return self.__data
-
-    @data.setter
-    def data(self, data):
-        self.__data = data
 
     @property
     def columns(self):
@@ -71,11 +64,11 @@ class TimeframeDataset:
         """data: list of lists or tuples; column_names: list of strings with column names"""
         if not TimeframeDataset.is_data_ok(data, columns, tsname):
             raise TimeframeDatasetError("Given data is not ok!")
-        self.data = data
         self.columns = columns
         self.tsname = tsname
         self.timeframe = Timeframe(timeframe)
         self.tsunit = tsunit
+        super().__init__(data)
 
     def get_dict(self, index=-1) -> dict:
         """Return dictionary with data from given index"""
