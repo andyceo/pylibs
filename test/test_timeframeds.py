@@ -1,3 +1,4 @@
+import collections
 import secrets
 import random
 import unittest
@@ -7,32 +8,44 @@ from timeframeds import TimeframeDataset
 
 class TestTimeframeds(unittest.TestCase):
     def test_timeframe(self):
-        expected_results = {'1m': 60, '5m': 300, '15m': 900, '30m': 1800, '1h': 3600, '3h': 10800, '4h': 14400,
-                            '6h': 21600, '12h': 43200, '1D': 86400, '7D': 604800, '1W': 604800, '14D': 1209600,
-                            '1M': 2592000}
-        timeframes = Timeframe.timeframes()
-        len_timeframes = len(timeframes)
-        len_results = len(expected_results)
-        self.assertEqual(len_timeframes, len_results,
-                         "Number of possible timeframes {} does not match with number of expected results {}".format(
-                             len_timeframes, len_results))
+        test_vector = collections.OrderedDict()
+        test_vector['1m'] = {'duration': 60, 'period': 1, 'timecode': 'm'}
+        test_vector['5m'] = {'duration': 300, 'period': 5, 'timecode': 'm'}
+        test_vector['15m'] = {'duration': 900, 'period': 15, 'timecode': 'm'}
+        test_vector['30m'] = {'duration': 1800, 'period': 30, 'timecode': 'm'}
+        test_vector['1h'] = {'duration': 3600, 'period': 1, 'timecode': 'h'}
+        test_vector['3h'] = {'duration': 10800, 'period': 3, 'timecode': 'h'}
+        test_vector['4h'] = {'duration': 14400, 'period': 4, 'timecode': 'h'}
+        test_vector['6h'] = {'duration': 21600, 'period': 6, 'timecode': 'h'}
+        test_vector['12h'] = {'duration': 43200, 'period': 12, 'timecode': 'h'}
+        test_vector['1D'] = {'duration': 86400, 'period': 1, 'timecode': 'D'}
+        test_vector['7D'] = {'duration': 604800, 'period': 7, 'timecode': 'D'}
+        test_vector['1W'] = {'duration': 604800, 'period': 1, 'timecode': 'W'}
+        test_vector['14D'] = {'duration': 1209600, 'period': 14, 'timecode': 'D'}
+        test_vector['1M'] = {'duration': 2592000, 'period': 1, 'timecode': 'M'}
 
-        for tf, d in expected_results.items():
-            self.assertEqual(Timeframe.timeframe_duration(tf), d,
-                             "Duration of timeframe {} not match with expected result {}".format(tf, d))
+        timecodes = {}  # construct expected result timecodes in loop
+        for tfs, props in test_vector.items():
+            if props['timecode'] not in timecodes and tfs[0] == '1' and tfs[1] not in '0123456789':
+                timecodes[props['timecode']] = props['duration']
 
-        # Test Timeframe.is_allowed()
-        self.assertTrue(Timeframe.is_allowed('1m'))
-        self.assertTrue(Timeframe.is_allowed('1W'))
+            # Test Timeframe creation
+            tf = Timeframe(tfs)
+            self.assertIsInstance(tf, Timeframe)
+            self.assertEqual(tf.timeframe, tfs)
+            self.assertEqual(tf.duration, props['duration'])
+            self.assertEqual(tf.timecode, props['timecode'])
+            # self.assertEqual(tf.period, props['period'])
+            self.assertTrue(Timeframe.is_allowed(tfs))
+
+        # Test allowed timeframes
+        self.assertEqual(Timeframe.timeframes(), tuple(test_vector.keys()))
+
+        # Test allowed timeframe timecodes
+        self.assertEqual(Timeframe.timecodes(), timecodes)
+
+        # Test Timeframe.is_allowed() for wrong timestamp
         self.assertFalse(Timeframe.is_allowed('1j'))
-
-        # Test Timeframe creation
-        tf_string = '1D'
-        tf = Timeframe(tf_string)
-        self.assertIsInstance(tf, Timeframe, "Timeframe was not created properly")
-        self.assertEqual(tf.timeframe, tf_string, "Timeframe.timeframe was not set properly")
-        self.assertEqual(tf.duration, Timeframe.timeframe_duration(tf_string),
-                         "Timeframe.duration calculate error during timeframe creation")
 
         # Test wrong timeframe raise exception
         self.assertRaises(TimeframeError, Timeframe, '1j')
