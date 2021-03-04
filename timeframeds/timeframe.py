@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """This module contain class Timeframe representing typical exchanges timeframes"""
-TIMEFRAMES = ('1m', '5m', '15m', '30m', '1h', '3h', '6h', '12h', '1D', '7D', '1W', '14D', '1M')  # possible timeframes
 
 
 class TimeframeError(Exception):
@@ -16,7 +15,7 @@ class Timeframe:
 
     @timeframe.setter
     def timeframe(self, timeframe):
-        if timeframe not in TIMEFRAMES:
+        if not Timeframe.is_allowed(timeframe):
             raise TimeframeError('Unknown timeframe {}! Exiting...'.format(timeframe))
         self.__timeframe = timeframe
         self.__duration = Timeframe.tfd(self.__timeframe)
@@ -41,6 +40,16 @@ class Timeframe:
         else:
             raise TimeframeError('Unknown timeframe {}! Exiting...'.format(tf))
         return tfd
+
+    @staticmethod
+    def timeframes():
+        """Return the tuple containing allowed timeframe codes"""
+        return '1m', '5m', '15m', '30m', '1h', '3h', '6h', '12h', '1D', '7D', '1W', '14D', '1M'
+
+    @staticmethod
+    def is_allowed(timeframe: str):
+        """Check if given timeframe is allowed"""
+        return timeframe in Timeframe.timeframes()
 
     def __init__(self, timeframe: str):
         self.timeframe = timeframe

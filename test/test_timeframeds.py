@@ -1,30 +1,40 @@
 import secrets
 import random
 import unittest
-from timeframeds import Timeframe, TimeframeError, TIMEFRAMES
+from timeframeds import Timeframe, TimeframeError
 from timeframeds import TimeframeDataset
 
 
 class TestTimeframeds(unittest.TestCase):
     def test_timeframe(self):
-        expected_results = [60, 300, 900, 1800, 3600, 10800, 21600, 43200, 86400, 604800, 604800, 1209600, 2592000]
-        len_timeframes = len(TIMEFRAMES)
+        expected_results = {'1m': 60, '5m': 300, '15m': 900, '30m': 1800, '1h': 3600, '3h': 10800, '6h': 21600,
+                            '12h': 43200, '1D': 86400, '7D': 604800, '1W': 604800, '14D': 1209600, '1M': 2592000}
+        timeframes = Timeframe.timeframes()
+        len_timeframes = len(timeframes)
         len_results = len(expected_results)
         self.assertEqual(len_timeframes, len_results,
                          "Number of possible timeframes {} does not match with number of expected results {}".format(
                              len_timeframes, len_results))
 
-        for i in range(len_timeframes):
-            self.assertEqual(Timeframe.tfd(TIMEFRAMES[i]), expected_results[i],
-                             "Duration of timeframe {} not match with expected result {}".format(TIMEFRAMES[i],
-                                                                                                 expected_results[i]))
+        for tf, d in expected_results.items():
+            self.assertEqual(Timeframe.tfd(tf), d,
+                             "Duration of timeframe {} not match with expected result {}".format(tf, d))
 
+        # Test Timeframe.is_allowed()
+        self.assertTrue(Timeframe.is_allowed('1m'))
+        self.assertTrue(Timeframe.is_allowed('1W'))
+        self.assertFalse(Timeframe.is_allowed('1j'))
+
+        # Test Timeframe creation
         tf_string = '1D'
         tf = Timeframe(tf_string)
         self.assertIsInstance(tf, Timeframe, "Timeframe was not created properly")
         self.assertEqual(tf.timeframe, tf_string, "Timeframe.timeframe was not set properly")
         self.assertEqual(tf.duration, Timeframe.tfd(tf_string),
                          "Timeframe.duration calculate error during timeframe creation")
+
+        # Test wrong timeframe raise exception
+        self.assertRaises(TimeframeError, Timeframe, '1j')
 
     def test_timeframe_dataset(self):
         # Define test vector
