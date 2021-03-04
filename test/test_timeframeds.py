@@ -102,8 +102,14 @@ class TestTimeframeds(unittest.TestCase):
 
             from_index = min(random_index1, random_index2)
             to_index = max(random_index1, random_index2)
-            self.assertEqual(ds[from_index:to_index], t['data'][from_index:to_index])
-            self.assertEqual(ds.data[from_index:to_index], t['data'][from_index:to_index])
+
+            slice = ds[from_index:to_index]
+            self.assertIsInstance(slice, TimeframeDataset)
+            self.assertEqual(slice, t['data'][from_index:to_index])
+
+            slice_data = ds.data[from_index:to_index]
+            self.assertIsInstance(slice_data, list)
+            self.assertEqual(slice_data, t['data'][from_index:to_index])
 
             # Test TimeframeDataset.is_ok_static() and .is_ok() methods
             self.assertTrue(TimeframeDataset.is_data_ok(t['data'], t['columns'], t['tsname']))

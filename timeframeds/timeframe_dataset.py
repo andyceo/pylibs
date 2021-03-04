@@ -70,6 +70,13 @@ class TimeframeDataset(collections.UserList):
         self.tsunit = tsunit
         super().__init__(data)
 
+    def __getitem__(self, i):
+        if isinstance(i, slice):
+            return self.__class__(self.data[i], columns=self.columns, tsname=self.tsname,
+                                  timeframe=self.timeframe.timeframe, tsunit=self.tsunit)
+        else:
+            return self.data[i]
+
     def get_dict(self, index=-1) -> dict:
         """Return dictionary with data from given index"""
         return {column: self.data[index][idx] for idx, column in enumerate(self.columns)}
