@@ -7,7 +7,7 @@ from timeframeds import TimeframeDataset
 
 class TestTimeframeds(unittest.TestCase):
     def test_timeframe(self):
-        expected_results = [60, 300, 900, 1800, 3600, 10800, 21600, 43200, 86400, 604800, 1209600, 2592000]
+        expected_results = [60, 300, 900, 1800, 3600, 10800, 21600, 43200, 86400, 604800, 604800, 1209600, 2592000]
         len_timeframes = len(TIMEFRAMES)
         len_results = len(expected_results)
         self.assertEqual(len_timeframes, len_results,

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """This module contain class Timeframe representing typical exchanges timeframes"""
-TIMEFRAMES = ('1m', '5m', '15m', '30m', '1h', '3h', '6h', '12h', '1D', '7D', '14D', '1M')  # possible timeframes
+TIMEFRAMES = ('1m', '5m', '15m', '30m', '1h', '3h', '6h', '12h', '1D', '7D', '1W', '14D', '1M')  # possible timeframes
 
 
 class TimeframeError(Exception):
@@ -34,6 +34,8 @@ class Timeframe:
             tfd = int(tf.replace('h', '')) * 60 * 60
         elif 'D' in tf:
             tfd = int(tf.replace('D', '')) * 60 * 60 * 24
+        elif 'W' in tf:
+            tfd = int(tf.replace('W', '')) * 7 * 60 * 60 * 24
         elif 'M' in tf:
             tfd = int(tf.replace('M', '')) * 60 * 60 * 24 * 30
         else:
