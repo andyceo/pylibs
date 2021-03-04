@@ -26,3 +26,11 @@ You also can use `build.sh` script to build and push image to custom repository 
 ## Updating your PYTHONPATH for easy import
 
 Create a `.pth` file inside your site directory or change `.bashrc`. See more on [Permanently add a directory to PYTHONPATH](https://stackoverflow.com/questions/3402168/permanently-add-a-directory-to-pythonpath)
+
+
+## Packages interdependencies
+
+- aiml: none
+- bitfinex: timeframeds
+- timeframeds: timefuncs
+- timefuncs: none

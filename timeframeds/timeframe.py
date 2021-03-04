@@ -15,17 +15,17 @@ class Timeframe:
 
     @timeframe.setter
     def timeframe(self, timeframe):
-        if not Timeframe.is_allowed(timeframe):
+        if not self.is_allowed(timeframe):
             raise TimeframeError('Unknown timeframe {}! Exiting...'.format(timeframe))
         self.__timeframe = timeframe
-        self.__duration = Timeframe.tfd(self.__timeframe)
+        self.__duration = self.timeframe_duration(self.__timeframe)
 
     @property
     def duration(self):
         return self.__duration
 
     @staticmethod
-    def tfd(tf: str) -> int:
+    def timeframe_duration(tf: str) -> int:
         """Calculate and return the timeframe duration in seconds. Unstable for monthes"""
         if 'm' in tf:
             tfd = int(tf.replace('m', '')) * 60
@@ -44,7 +44,7 @@ class Timeframe:
     @staticmethod
     def timeframes():
         """Return the tuple containing allowed timeframe codes"""
-        return '1m', '5m', '15m', '30m', '1h', '3h', '6h', '12h', '1D', '7D', '1W', '14D', '1M'
+        return '1m', '5m', '15m', '30m', '1h', '3h', '4h', '6h', '12h', '1D', '7D', '1W', '14D', '1M'
 
     @staticmethod
     def is_allowed(timeframe: str):
