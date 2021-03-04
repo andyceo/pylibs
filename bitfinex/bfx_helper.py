@@ -21,11 +21,6 @@ class BitfinexHelper:
     """Groups of Bitfinex API endpoints"""
 
     @staticmethod
-    def tfs():
-        """Return list of possible timeframes"""
-        return ['1m', '5m', '15m', '30m', '1h', '3h', '6h', '12h', '1D', '7D', '14D', '1M']
-
-    @staticmethod
     def tfd(tf: str) -> int:
         # @todo: refactor using tfd method
         return Timeframe.duration(tf)

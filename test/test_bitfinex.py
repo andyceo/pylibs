@@ -1,5 +1,7 @@
 import unittest
 from bitfinex import BitfinexHelper as bh
+from bitfinex import BitfinexTimeframe
+from timeframeds import TimeframeError
 
 
 class TestBitfinex(unittest.TestCase):
@@ -18,3 +20,23 @@ class TestBitfinex(unittest.TestCase):
 
         for i in range(len(candles)):
             self.assertEqual(bh.candle2dict(candles[i]), expected_results[i])
+
+    def test_bitfinex_timeframe(self):
+        test_vector = {
+            '1D': {'timeframe': '1D', 'duration': 24 * 60 * 60, 'is_allowed': True},
+            '7D': {'timeframe': '7D', 'duration': 7 * 24 * 60 * 60, 'is_allowed': True},
+            '1W': {'timeframe': '7D', 'duration': 7 * 24 * 60 * 60, 'is_allowed': False},
+            '1m': {'timeframe': '1m', 'duration': 60, 'is_allowed': True},
+        }
+
+        # Test correct timeframes creation
+        for tf_code, expected in test_vector.items():
+            tf = BitfinexTimeframe(tf_code)
+            self.assertIsInstance(tf, BitfinexTimeframe)
+            self.assertEqual(tf.timeframe, expected['timeframe'])
+            self.assertEqual(tf.duration, expected['duration'])
+            self.assertEqual(BitfinexTimeframe.is_allowed(tf_code), expected['is_allowed'])
+
+        # Test incorrect timeframe creation raises exception
+        self.assertRaises(TimeframeError, BitfinexTimeframe, '1j')
+        self.assertRaises(TimeframeError, BitfinexTimeframe, '4h')
