@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """This module contain class Timeframe representing typical exchanges timeframes"""
+import time
+import datetime
 
 
 class TimeframeError(Exception):
@@ -71,3 +73,27 @@ class Timeframe:
 
     def __init__(self, timeframe: str):
         self.timeframe = timeframe
+
+    def borders(self, timestamp=time.time()) -> dict:
+        """Return timeframe start, end timestamps (time borders) for the given timestamp (start <= timestamp < end)"""
+        dtob = datetime.datetime.fromtimestamp(timestamp, tz=datetime.timezone.utc).replace(microsecond=0)
+        if self.timecode == 'm':
+            start_time_part = self.period * (dtob.minute // self.period)
+            start_dtob = dtob.replace(minute=start_time_part, second=0, microsecond=0)
+        elif self.timecode == 'h':
+            start_time_part = self.period * (dtob.hour // self.period)
+            start_dtob = dtob.replace(hour=start_time_part, minute=0, second=0, microsecond=0)
+        else:
+            raise TimeframeError('Can not get start date object for this timeframe!')
+        start = int(start_dtob.timestamp())
+        end = start + self.duration
+        iso_ts = datetime.datetime.fromtimestamp(timestamp, tz=datetime.timezone.utc).isoformat()
+        iso_start = datetime.datetime.fromtimestamp(start, tz=datetime.timezone.utc).isoformat()[:-9]
+        iso_end = datetime.datetime.fromtimestamp(end, tz=datetime.timezone.utc).isoformat()[:-9]
+        secs_passed = timestamp - start
+        secs_remain = end - timestamp
+        pcnt_passed = 100 * secs_passed / self.duration
+        pcnt_remain = 100 * secs_remain / self.duration
+        return {'start': start, 'end': end, 'iso_start': iso_start, 'iso_end': iso_end, 'iso_timestamp': iso_ts,
+                'secs_passed': secs_passed, 'secs_remain': secs_remain, 'timestamp': timestamp,
+                'pcnt_passed': pcnt_passed, 'pcnt_remain': pcnt_remain}
