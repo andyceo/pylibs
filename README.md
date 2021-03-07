@@ -31,6 +31,8 @@ Create a `.pth` file inside your site directory or change `.bashrc`. See more on
 ## Packages interdependencies
 
 - aiml: none
+- singleton: none
+- timefuncs: none
+- webserver: none
 - bitfinex: timeframeds
 - timeframeds: timefuncs
-- timefuncs: none
