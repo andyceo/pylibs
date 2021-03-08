@@ -17,6 +17,7 @@ to the if statement in Singleton.__call__.
 
 
 class Singleton(type):
+    """Minimalistic Singleton pattern implementation. Use this class as parent for classes that mean to be Singletons"""
     _instances = {}
 
     def __call__(cls, *args, **kwargs):
