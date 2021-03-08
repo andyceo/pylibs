@@ -9,5 +9,6 @@ script:
   - python -m unittest test.test_config
   - python -m unittest test.test_dbinflux
   - python -m unittest test.test_docker_utils
+  - python -m unittest test.test_singleton
   - python -m unittest test.test_timeframeds
   - python -m unittest test.test_timefuncs
