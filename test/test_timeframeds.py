@@ -144,13 +144,19 @@ class TestTimeframeds(unittest.TestCase):
             self.assertAlmostEqual(ds.tscoef, t['tscoef'])
 
             # Test TimeframeDataset.data attribute and object indexing the same as object.data indexing and slicing
+            random_column_index = random.randrange(len(t['columns']))
+
             random_index1 = secrets.randbelow(len(t['data']))
             self.assertEqual(ds[random_index1], t['data'][random_index1])
             self.assertEqual(ds.data[random_index1], t['data'][random_index1])
+            self.assertEqual(ds[random_index1][random_column_index], t['data'][random_index1][random_column_index])
+            self.assertEqual(ds.data[random_index1][random_column_index], t['data'][random_index1][random_column_index])
 
             random_index2 = random.randrange(len(ds))
             self.assertEqual(ds[random_index2], t['data'][random_index2])
             self.assertEqual(ds.data[random_index2], t['data'][random_index2])
+            self.assertEqual(ds[random_index2][random_column_index], t['data'][random_index2][random_column_index])
+            self.assertEqual(ds.data[random_index2][random_column_index], t['data'][random_index2][random_column_index])
 
             from_index = min(random_index1, random_index2)
             to_index = max(random_index1, random_index2)
@@ -195,3 +201,9 @@ class TestTimeframeds(unittest.TestCase):
 
             # Test TimeframeDataset.is_last_closed() method
             self.assertTrue(ds.is_last_closed())
+
+            # Tests TimeframeDataset.is_continuous() method
+            if ds.timeframe.timecode != 'M':  # skip that test for months timeframes
+                self.assertTrue(ds.is_continuous())
+                ds[-1][ds.tsindex] += 1
+                self.assertFalse(ds.is_continuous())

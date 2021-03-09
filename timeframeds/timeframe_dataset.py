@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """This module contain class HistoryDataset representing history data"""
-import collections
 import time
+from collections import UserList
 from timeframeds import Timeframe
 from timefuncs import gmtdt
 
@@ -15,7 +15,7 @@ class WrongTimestampUnit(Exception):
     pass
 
 
-class TimeframeDataset(collections.UserList):
+class TimeframeDataset(UserList):
     """Class for work with history data. Provide handy functions to work with history dataset"""
 
     @property
@@ -92,7 +92,7 @@ class TimeframeDataset(collections.UserList):
         return lst
 
     def get_timestamp(self, index=-1) -> int:
-        """Return the timestamp from given index"""
+        """Return start timestamp from given index"""
         return int(self.data[index][self.tsindex] * self.tscoef)
 
     @staticmethod
@@ -102,7 +102,7 @@ class TimeframeDataset(collections.UserList):
         tsindex = columns.index(tsname)
         tsvalue = 0
         res = True
-        for item in data:
+        for i, item in enumerate(data):
             res = res and (isinstance(item, list) or isinstance(item, tuple))  # check all data items are lists (tuples)
             res = res and (columns_len == len(item))  # check length for columns and each item
             res = res and (tsvalue < item[tsindex])  # check data is sorted by timestamp
@@ -112,6 +112,8 @@ class TimeframeDataset(collections.UserList):
 
     @staticmethod
     def timestamp_coefficient(tsunit: str) -> float:
+        """Calculate and return timestamp coefficient - timestamp must be multiplied at this coef and become measured in
+        seconds"""
         coefs = {'s': 1, 'ms': 0.001}
         if tsunit not in coefs:
             raise WrongTimestampUnit("Timestamp unit is wrong or unknown!")
@@ -123,13 +125,26 @@ class TimeframeDataset(collections.UserList):
 
     def is_inside(self, timestamp=time.time(), index=-1):
         """Chek given timestamp is inside given index"""
-        return self.data[index][self.tsindex] * self.tscoef <= timestamp < self.data[index][self.tsindex] * self.tscoef + self.timeframe.duration
+        return self.data[index][self.tsindex] * self.tscoef <= timestamp < \
+               self.data[index][self.tsindex] * self.tscoef + self.timeframe.duration
 
     def is_last_closed(self):
+        """Check last bar is closed (current timestamp is equal or bigger then closing timestamp)"""
         timestamp = time.time()
         last_timestamp = self.get_timestamp()
         tfduration = self.timeframe.duration
         return timestamp >= last_timestamp + tfduration
+
+    def is_continuous(self):
+        """Check dataset is continuous (has now holes in data, has points for all timestamps)"""
+        ts = self.data[0][self.tsindex]
+        for item in self.data[1:]:
+            tsn = ts + self.timeframe.duration
+            if item[self.tsindex] == tsn:
+                ts = tsn
+            else:
+                return False
+        return True
 
     def summary(self):
         """Return string with readable summary of TimeframeDataset. Usage: print(ds.summary())"""
