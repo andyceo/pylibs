@@ -206,6 +206,14 @@ class TestTimeframeds(unittest.TestCase):
 
             self.assertEqual(ds.get_dict(), expected)
 
+            # Test (roughly) TimeframeDataset.get_dict() with given timestamp_format
+            result = ds.get_dict(index, timestamp_format='timestamp')
+            self.assertIsInstance(result[ds.tsname], int)
+            result = ds.get_dict(index, timestamp_format='iso')
+            self.assertIsInstance(result[ds.tsname], str)
+            result = ds.get_dict(index, timestamp_format='human')
+            self.assertIsInstance(result[ds.tsname], str)
+
             # Test TimeframeDataset.is_inside() method
             index = 1
             timestamp = int(t['data'][index][t['columns'].index(t['tsname'])] * t['tscoef'])

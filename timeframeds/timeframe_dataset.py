@@ -77,9 +77,16 @@ class TimeframeDataset(UserList):
         else:
             return self.data[i]
 
-    def get_dict(self, index=-1) -> dict:
-        """Return dictionary with data from given index"""
-        return {column: self.data[index][idx] for idx, column in enumerate(self.columns)}
+    def get_dict(self, index=-1, timestamp_format=None) -> dict:
+        """Return dictionary with data from given index. Timestamp formatted according given timestamp_format"""
+        d = {column: self.data[index][idx] for idx, column in enumerate(self.columns)}
+        if timestamp_format == 'timestamp':
+            int(d[self.tsname] * self.tscoef)
+        elif timestamp_format == 'human':
+            d[self.tsname] = self.timeframe.fmt(d[self.tsname] * self.tscoef)
+        elif timestamp_format == 'iso':
+            d[self.tsname] = self.timeframe.fmt(d[self.tsname] * self.tscoef, fmt='iso')
+        return d
 
     def dict2list(self, d):
         """Return correct list that can be attached to self.data. This function is reverse to self.get_dict()"""
