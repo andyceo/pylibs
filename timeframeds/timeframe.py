@@ -3,6 +3,7 @@
 """This module contain class Timeframe representing typical exchanges timeframes"""
 import time
 import datetime
+from timefuncs import gmtdt
 
 
 class TimeframeError(Exception):
@@ -97,3 +98,14 @@ class Timeframe:
         return {'start': start, 'end': end, 'iso_start': iso_start, 'iso_end': iso_end, 'iso_timestamp': iso_ts,
                 'secs_passed': secs_passed, 'secs_remain': secs_remain, 'timestamp': timestamp,
                 'pcnt_passed': pcnt_passed, 'pcnt_remain': pcnt_remain}
+
+    def fmt(self, timestamp=time.time(), fmt='human') -> str:
+        """Format given timestamp into the human-readable form based on current Timeframe"""
+        s = gmtdt(timestamp)
+        if fmt != 'iso':
+            s = s.replace('-', '.').replace('T', ' ')
+            if self.timecode in ['m', 'h']:
+                s = s[:-9]
+            else:
+                s = s[:-15]
+        return s

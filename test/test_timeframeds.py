@@ -9,25 +9,37 @@ from timeframeds import TimeframeDataset
 class TestTimeframeds(unittest.TestCase):
     def test_timeframe(self):
         test_vector = collections.OrderedDict()
-        test_vector['1m'] = {'duration': 60, 'period': 1, 'timecode': 'm', 'borders': [
-            {'timestamp': 1614973900, 'result': {'start': 1614973860, 'end': 1614973920,
-                                                 'iso_start': '2021-03-05T19:51'}},
-            {'timestamp': 1614973401.1, 'result': {'start': 1614973380, 'end': 1614973440}},
-            {'timestamp': 1614973740, 'result': {'start': 1614973740, 'end': 1614973800}},]}
+        test_vector['1m'] = {
+            'duration': 60, 'period': 1, 'timecode': 'm',
+            'borders': [
+                {'timestamp': 1614973900,
+                 'result': {'start': 1614973860, 'end': 1614973920, 'iso_start': '2021-03-05T19:51'}},
+                {'timestamp': 1614973401.1, 'result': {'start': 1614973380, 'end': 1614973440}},
+                {'timestamp': 1614973740, 'result': {'start': 1614973740, 'end': 1614973800}},
+            ],
+            'fmt': [
+                {'timestamp': 1614973900, 'result': '2021.03.05 19:51'},
+                {'timestamp': 1614973401.1, 'result': '2021.03.05 19:43'},
+                {'timestamp': 1614973401.1, 'fmt': 'iso', 'result': '2021-03-05T19:43:21+00:00'},
+            ]}
         test_vector['5m'] = {'duration': 300, 'period': 5, 'timecode': 'm', 'borders': [
             {'timestamp': 1613974900, 'result': {'start': 1613974800, 'end': 1613975100}}]}
         test_vector['15m'] = {'duration': 900, 'period': 15, 'timecode': 'm', 'borders': [
             {'timestamp': 1614973344, 'result': {'start': 1614972600, 'end': 1614973500}}]}
         test_vector['30m'] = {'duration': 1800, 'period': 30, 'timecode': 'm', 'borders': [
             {'timestamp': 1613976000, 'result': {'start': 1613975400, 'end': 1613977200}}]}
-        test_vector['1h'] = {'duration': 3600, 'period': 1, 'timecode': 'h', 'borders': [
-            {'timestamp': 1613990000, 'result': {'start': 1613988000, 'end': 1613991600}}]}
+        test_vector['1h'] = {
+            'duration': 3600, 'period': 1, 'timecode': 'h',
+            'borders': [{'timestamp': 1613990000, 'result': {'start': 1613988000, 'end': 1613991600}}],
+            'fmt': [{'timestamp': 1613990000, 'result': '2021.02.22 10:33'}],
+        }
         test_vector['3h'] = {'duration': 10800, 'period': 3, 'timecode': 'h', 'borders': [
             {'timestamp': 1613984581, 'result': {'start': 1613984400, 'end': 1613995200}}]}
         test_vector['4h'] = {'duration': 14400, 'period': 4, 'timecode': 'h'}
         test_vector['6h'] = {'duration': 21600, 'period': 6, 'timecode': 'h'}
         test_vector['12h'] = {'duration': 43200, 'period': 12, 'timecode': 'h'}
-        test_vector['1D'] = {'duration': 86400, 'period': 1, 'timecode': 'D'}
+        test_vector['1D'] = {'duration': 86400, 'period': 1, 'timecode': 'D',
+                             'fmt': [{'timestamp': 1613990000, 'result': '2021.02.22'}],}
         test_vector['7D'] = {'duration': 604800, 'period': 7, 'timecode': 'D'}
         test_vector['1W'] = {'duration': 604800, 'period': 1, 'timecode': 'W'}
         test_vector['14D'] = {'duration': 1209600, 'period': 14, 'timecode': 'D'}
@@ -47,10 +59,10 @@ class TestTimeframeds(unittest.TestCase):
             self.assertEqual(tf.period, props['period'])
             self.assertTrue(Timeframe.is_allowed(tfs))
 
-            # Test .info() method for the test vectors containing data for such test
+            # Test .borders() method for the test vectors containing data for such test
             if 'borders' in props:
-                for bdrs in props['borders']:
-                    res = tf.borders(bdrs['timestamp'])
+                for item in props['borders']:
+                    res = tf.borders(item['timestamp'])
                     self.assertIsInstance(res, dict)
                     self.assertEqual(len(res), 10)
                     self.assertIn('start', res)
@@ -63,8 +75,14 @@ class TestTimeframeds(unittest.TestCase):
                     self.assertIn('pcnt_passed', res)
                     self.assertIn('pcnt_remain', res)
                     self.assertIn('timestamp', res)
-                    for k, v in bdrs['result'].items():
+                    for k, v in item['result'].items():
                         self.assertEqual(res[k], v)
+
+            # Test .fmt() method for the test vectors containing data for such test
+            if 'fmt' in props:
+                for item in props['fmt']:
+                    res = tf.fmt(item['timestamp'], fmt=item['fmt'] if 'fmt' in item else None)
+                    self.assertIn(res, item['result'])
 
         # Test allowed timeframes
         self.assertEqual(Timeframe.timeframes(), tuple(test_vector.keys()))
