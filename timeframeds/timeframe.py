@@ -84,6 +84,8 @@ class Timeframe:
         elif self.timecode == 'h':
             start_time_part = self.period * (dtob.hour // self.period)
             start_dtob = dtob.replace(hour=start_time_part, minute=0, second=0, microsecond=0)
+        elif self.timecode == 'D' and self.period == 1:
+            start_dtob = dtob.replace(hour=0, minute=0, second=0, microsecond=0)
         else:
             raise TimeframeError('Can not get start date object for this timeframe!')
         start = int(start_dtob.timestamp())

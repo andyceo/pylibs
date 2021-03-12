@@ -38,8 +38,14 @@ class TestTimeframeds(unittest.TestCase):
         test_vector['4h'] = {'duration': 14400, 'period': 4, 'timecode': 'h'}
         test_vector['6h'] = {'duration': 21600, 'period': 6, 'timecode': 'h'}
         test_vector['12h'] = {'duration': 43200, 'period': 12, 'timecode': 'h'}
-        test_vector['1D'] = {'duration': 86400, 'period': 1, 'timecode': 'D',
-                             'fmt': [{'timestamp': 1613990000, 'result': '2021.02.22'}],}
+        test_vector['1D'] = {
+            'duration': 86400, 'period': 1, 'timecode': 'D',
+            'borders': [{'timestamp': 1614627921, 'result': {'start': 1614556800, 'end': 1614643200}}],
+            'fmt': [
+                {'timestamp': 1613990000, 'result': '2021.02.22'},
+                {'timestamp': 1614627921, 'result': '2021.03.01'},
+            ],
+        }
         test_vector['7D'] = {'duration': 604800, 'period': 7, 'timecode': 'D'}
         test_vector['1W'] = {'duration': 604800, 'period': 1, 'timecode': 'W'}
         test_vector['14D'] = {'duration': 1209600, 'period': 14, 'timecode': 'D'}
