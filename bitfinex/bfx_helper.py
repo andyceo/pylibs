@@ -23,7 +23,7 @@ class BitfinexHelper:
     @staticmethod
     def tfd(tf: str) -> int:
         # @todo: refactor using tfd method
-        return Timeframe.duration(tf)
+        return Timeframe(tf).duration
 
     @staticmethod
     def candle_indexes():

@@ -79,6 +79,7 @@ class TimeframeDataset(UserList):
 
     def get_dict(self, index=-1, timestamp_format=None) -> dict:
         """Return dictionary with data from given index. Timestamp formatted according given timestamp_format"""
+        # @todo fix method, it fails when self.data is empty, add tests
         d = {column: self.data[index][idx] for idx, column in enumerate(self.columns)}
         if timestamp_format == 'timestamp':
             int(d[self.tsname] * self.tscoef)
