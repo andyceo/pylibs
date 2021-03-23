@@ -1,4 +1,5 @@
 import collections
+import json
 import secrets
 import random
 import unittest
@@ -9,25 +10,15 @@ from timeframeds import TimeframeDataset
 class TestTimeframeds(unittest.TestCase):
     def test_timeframe(self):
         test_vector = collections.OrderedDict()
-        test_vector['1m'] = {
-            'duration': 60, 'period': 1, 'timecode': 'm',
-            'borders': [
-                {'timestamp': 1614973900,
-                 'result': {'start': 1614973860, 'end': 1614973920, 'iso_start': '2021-03-05T19:51'}},
-                {'timestamp': 1614973401.1, 'result': {'start': 1614973380, 'end': 1614973440}},
-                {'timestamp': 1614973740, 'result': {'start': 1614973740, 'end': 1614973800}},
-            ],
-            'fmt': [
-                {'timestamp': 1614973900, 'result': '2021.03.05 19:51'},
-                {'timestamp': 1614973401.1, 'result': '2021.03.05 19:43'},
-                {'timestamp': 1614973401.1, 'fmt': 'iso', 'result': '2021-03-05T19:43:21+00:00'},
-            ]}
-        test_vector['5m'] = {'duration': 300, 'period': 5, 'timecode': 'm', 'borders': [
-            {'timestamp': 1613974900, 'result': {'start': 1613974800, 'end': 1613975100}}]}
-        test_vector['15m'] = {'duration': 900, 'period': 15, 'timecode': 'm', 'borders': [
-            {'timestamp': 1614973344, 'result': {'start': 1614972600, 'end': 1614973500}}]}
-        test_vector['30m'] = {'duration': 1800, 'period': 30, 'timecode': 'm', 'borders': [
-            {'timestamp': 1613976000, 'result': {'start': 1613975400, 'end': 1613977200}}]}
+
+        with open('test/test_vectors/timeframes.json') as json_file:
+            tvfromjson = json.load(json_file)
+            order = ['1m', '5m', '15m', '30m']
+            for tf in order:
+                test_vector[tf] = tvfromjson[tf]
+                del tvfromjson[tf]
+            del tvfromjson
+
         test_vector['1h'] = {
             'duration': 3600, 'period': 1, 'timecode': 'h',
             'borders': [{'timestamp': 1613990000, 'result': {'start': 1613988000, 'end': 1613991600}}],

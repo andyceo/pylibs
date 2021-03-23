@@ -1,0 +1,88 @@
+{
+  "1m": {
+    "duration": 60,
+    "period": 1,
+    "timecode": "m",
+    "borders": [
+      {
+        "timestamp": 1614973900,
+        "result": {
+          "start": 1614973860,
+          "end": 1614973920,
+          "iso_start": "2021-03-05T19:51"
+        }
+      },
+      {
+        "timestamp": 1614973401.1,
+        "result": {
+          "start": 1614973380,
+          "end": 1614973440
+        }
+      },
+      {
+        "timestamp": 1614973740,
+        "result": {
+          "start": 1614973740,
+          "end": 1614973800
+        }
+      }
+    ],
+    "fmt": [
+      {
+        "timestamp": 1614973900,
+        "result": "2021.03.05 19:51"
+      },
+      {
+        "timestamp": 1614973401.1,
+        "result": "2021.03.05 19:43"
+      },
+      {
+        "timestamp": 1614973401.1,
+        "fmt": "iso",
+        "result": "2021-03-05T19:43:21+00:00"
+      }
+    ]
+  },
+  "5m": {
+    "duration": 300,
+    "period": 5,
+    "timecode": "m",
+    "borders": [
+      {
+        "timestamp": 1613974900,
+        "result": {
+          "start": 1613974800,
+          "end": 1613975100
+        }
+      }
+    ]
+  },
+  "15m": {
+    "duration": 900,
+    "period": 15,
+    "timecode": "m",
+    "borders": [
+      {
+        "timestamp": 1614973344,
+        "result": {
+          "start": 1614972600,
+          "end": 1614973500
+        }
+      }
+    ]
+  },
+  "30m": {
+    "duration": 1800,
+    "period": 30,
+    "timecode": "m",
+    "borders": [
+      {
+        "timestamp": 1613976000,
+        "result": {
+          "start": 1613975400,
+          "end": 1613977200
+        }
+      }
+    ]
+  }
+}
