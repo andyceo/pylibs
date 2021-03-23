@@ -1,4 +1,3 @@
-import collections
 import json
 import secrets
 import random
@@ -9,89 +8,61 @@ from timeframeds import TimeframeDataset
 
 class TestTimeframeds(unittest.TestCase):
     def test_timeframe(self):
-        test_vector = collections.OrderedDict()
-
+        testorder = ['1m', '5m', '15m', '30m', '1h', '3h', '4h', '6h', '12h', '1D', '7D', '1W', '14D', '1M']
         with open('test/test_vectors/timeframes.json') as json_file:
-            tvfromjson = json.load(json_file)
-            order = ['1m', '5m', '15m', '30m']
-            for tf in order:
-                test_vector[tf] = tvfromjson[tf]
-                del tvfromjson[tf]
-            del tvfromjson
+            test_vector = json.load(json_file)
+            timecodes = {}  # construct expected result timecodes in loop
 
-        test_vector['1h'] = {
-            'duration': 3600, 'period': 1, 'timecode': 'h',
-            'borders': [{'timestamp': 1613990000, 'result': {'start': 1613988000, 'end': 1613991600}}],
-            'fmt': [{'timestamp': 1613990000, 'result': '2021.02.22 10:33'}],
-        }
-        test_vector['3h'] = {'duration': 10800, 'period': 3, 'timecode': 'h', 'borders': [
-            {'timestamp': 1613984581, 'result': {'start': 1613984400, 'end': 1613995200}}]}
-        test_vector['4h'] = {'duration': 14400, 'period': 4, 'timecode': 'h'}
-        test_vector['6h'] = {'duration': 21600, 'period': 6, 'timecode': 'h'}
-        test_vector['12h'] = {'duration': 43200, 'period': 12, 'timecode': 'h'}
-        test_vector['1D'] = {
-            'duration': 86400, 'period': 1, 'timecode': 'D',
-            'borders': [{'timestamp': 1614627921, 'result': {'start': 1614556800, 'end': 1614643200}}],
-            'fmt': [
-                {'timestamp': 1613990000, 'result': '2021.02.22'},
-                {'timestamp': 1614627921, 'result': '2021.03.01'},
-            ],
-        }
-        test_vector['7D'] = {'duration': 604800, 'period': 7, 'timecode': 'D'}
-        test_vector['1W'] = {'duration': 604800, 'period': 1, 'timecode': 'W'}
-        test_vector['14D'] = {'duration': 1209600, 'period': 14, 'timecode': 'D'}
-        test_vector['1M'] = {'duration': 2592000, 'period': 1, 'timecode': 'M'}
+            for tfs in testorder:
+                props = test_vector[tfs]
+                if props['timecode'] not in timecodes and tfs[0] == '1' and tfs[1] not in '0123456789':
+                    timecodes[props['timecode']] = props['duration']
 
-        timecodes = {}  # construct expected result timecodes in loop
-        for tfs, props in test_vector.items():
-            if props['timecode'] not in timecodes and tfs[0] == '1' and tfs[1] not in '0123456789':
-                timecodes[props['timecode']] = props['duration']
+                # Test Timeframe creation
+                tf = Timeframe(tfs)
+                self.assertIsInstance(tf, Timeframe)
+                self.assertEqual(tf.timeframe, tfs)
+                self.assertEqual(tf.duration, props['duration'])
+                self.assertEqual(tf.timecode, props['timecode'])
+                self.assertEqual(tf.period, props['period'])
+                self.assertTrue(Timeframe.is_allowed(tfs))
 
-            # Test Timeframe creation
-            tf = Timeframe(tfs)
-            self.assertIsInstance(tf, Timeframe)
-            self.assertEqual(tf.timeframe, tfs)
-            self.assertEqual(tf.duration, props['duration'])
-            self.assertEqual(tf.timecode, props['timecode'])
-            self.assertEqual(tf.period, props['period'])
-            self.assertTrue(Timeframe.is_allowed(tfs))
+                # Test .borders() method for the test vectors containing data for such test
+                if 'borders' in props:
+                    for item in props['borders']:
+                        res = tf.borders(item['timestamp'])
+                        self.assertIsInstance(res, dict)
+                        self.assertEqual(len(res), 10)
+                        self.assertIn('start', res)
+                        self.assertIn('end', res)
+                        self.assertIn('iso_start', res)
+                        self.assertIn('iso_end', res)
+                        self.assertIn('iso_timestamp', res)
+                        self.assertIn('secs_passed', res)
+                        self.assertIn('secs_remain', res)
+                        self.assertIn('pcnt_passed', res)
+                        self.assertIn('pcnt_remain', res)
+                        self.assertIn('timestamp', res)
+                        for k, v in item['result'].items():
+                            self.assertEqual(res[k], v)
 
-            # Test .borders() method for the test vectors containing data for such test
-            if 'borders' in props:
-                for item in props['borders']:
-                    res = tf.borders(item['timestamp'])
-                    self.assertIsInstance(res, dict)
-                    self.assertEqual(len(res), 10)
-                    self.assertIn('start', res)
-                    self.assertIn('end', res)
-                    self.assertIn('iso_start', res)
-                    self.assertIn('iso_end', res)
-                    self.assertIn('iso_timestamp', res)
-                    self.assertIn('secs_passed', res)
-                    self.assertIn('secs_remain', res)
-                    self.assertIn('pcnt_passed', res)
-                    self.assertIn('pcnt_remain', res)
-                    self.assertIn('timestamp', res)
-                    for k, v in item['result'].items():
-                        self.assertEqual(res[k], v)
+                # Test .fmt() method for the test vectors containing data for such test
+                if 'fmt' in props:
+                    for item in props['fmt']:
+                        res = tf.fmt(item['timestamp'], fmt=item['fmt'] if 'fmt' in item else None)
+                        self.assertIn(res, item['result'])
 
-            # Test .fmt() method for the test vectors containing data for such test
-            if 'fmt' in props:
-                for item in props['fmt']:
-                    res = tf.fmt(item['timestamp'], fmt=item['fmt'] if 'fmt' in item else None)
-                    self.assertIn(res, item['result'])
+            # Test allowed timeframes
+            self.assertEqual(Timeframe.timeframes(), tuple(test_vector.keys()))
 
-        # Test allowed timeframes
-        self.assertEqual(Timeframe.timeframes(), tuple(test_vector.keys()))
+            # Test allowed timeframe timecodes
+            self.assertEqual(Timeframe.timecodes(), timecodes)
 
-        # Test allowed timeframe timecodes
-        self.assertEqual(Timeframe.timecodes(), timecodes)
+            # Test Timeframe.is_allowed() for wrong timestamp
+            self.assertFalse(Timeframe.is_allowed('1j'))
 
-        # Test Timeframe.is_allowed() for wrong timestamp
-        self.assertFalse(Timeframe.is_allowed('1j'))
-
-        # Test wrong timeframe raise exception
-        self.assertRaises(TimeframeError, Timeframe, '1j')
+            # Test wrong timeframe raise exception
+            self.assertRaises(TimeframeError, Timeframe, '1j')
 
     def test_timeframe_dataset(self):
         # Define test vector

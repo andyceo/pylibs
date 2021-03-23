@@ -84,5 +84,98 @@
         }
       }
     ]
+  },
+  "1h": {
+    "duration": 3600,
+    "period": 1,
+    "timecode": "h",
+    "borders": [
+      {
+        "timestamp": 1613990000,
+        "result": {
+          "start": 1613988000,
+          "end": 1613991600
+        }
+      }
+    ],
+    "fmt": [
+      {
+        "timestamp": 1613990000,
+        "result": "2021.02.22 10:33"
+      }
+    ]
+  },
+  "3h": {
+    "duration": 10800,
+    "period": 3,
+    "timecode": "h",
+    "borders": [
+      {
+        "timestamp": 1613984581,
+        "result": {
+          "start": 1613984400,
+          "end": 1613995200
+        }
+      }
+    ]
+  },
+  "4h": {
+    "duration": 14400,
+    "period": 4,
+    "timecode": "h"
+  },
+  "6h": {
+    "duration": 21600,
+    "period": 6,
+    "timecode": "h"
+  },
+  "12h": {
+    "duration": 43200,
+    "period": 12,
+    "timecode": "h"
+  },
+  "1D": {
+    "duration": 86400,
+    "period": 1,
+    "timecode": "D",
+    "borders": [
+      {
+        "timestamp": 1614627921,
+        "result": {
+          "start": 1614556800,
+          "end": 1614643200
+        }
+      }
+    ],
+    "fmt": [
+      {
+        "timestamp": 1613990000,
+        "result": "2021.02.22"
+      },
+      {
+        "timestamp": 1614627921,
+        "result": "2021.03.01"
+      }
+    ]
+  },
+  "7D": {
+    "duration": 604800,
+    "period": 7,
+    "timecode": "D"
+  },
+  "1W": {
+    "duration": 604800,
+    "period": 1,
+    "timecode": "W"
+  },
+  "14D": {
+    "duration": 1209600,
+    "period": 14,
+    "timecode": "D"
+  },
+  "1M": {
+    "duration": 2592000,
+    "period": 1,
+    "timecode": "M"
   }
 }
