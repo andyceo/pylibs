@@ -108,14 +108,16 @@ class TimeframeDataset(UserList):
         """Check given data is ok to be TimeframeDataset"""
         columns_len = len(columns)
         tsindex = columns.index(tsname)
-        tsvalue = 0
+        tsvalue = -1
         res = True
         for i, item in enumerate(data):
             res = res and (isinstance(item, list) or isinstance(item, tuple))  # check all data items are lists (tuples)
             res = res and (columns_len == len(item))  # check length for columns and each item
+            res = res and (item[tsindex] >= 0)  # check timestamp is positive
             res = res and (tsvalue < item[tsindex])  # check data is sorted by timestamp
             if not res:
                 break
+            tsvalue = item[tsindex]
         return res
 
     @staticmethod
