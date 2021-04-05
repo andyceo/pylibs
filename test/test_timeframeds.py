@@ -122,11 +122,19 @@ class TestTimeframeds(unittest.TestCase):
             # Test TimeframeDataset.is_ok_static() and .is_ok() methods
             self.assertTrue(TimeframeDataset.is_data_ok(t['data'], t['columns'], t['tsname']))
             self.assertTrue(ds.is_ok())
+            if ds.timeframe.timecode != 'M':  # not month timeframe
+                self.assertTrue(TimeframeDataset.is_data_ok(t['data'], t['columns'], t['tsname'],
+                                                            ds.timeframe.duration))
 
             # Test TimeframeDataset.get_dict(), dict2list and .get_timestamp() methods
             for index in [2, 4, -1]:
                 expected = int(t['data'][index][t['columns'].index(t['tsname'])] * t['tscoef'])
                 result = ds.get_timestamp(index)
+                self.assertEqual(result, expected)
+
+                expected = {column: t['data'][index][idx] for idx, column in enumerate(t['columns'])}
+                expected[ds.tsname] = int(expected[ds.tsname] * t['tscoef'])
+                result = ds.get_dict(index, timestamp_format='timestamp')
                 self.assertEqual(result, expected)
 
                 expected = {column: t['data'][index][idx] for idx, column in enumerate(t['columns'])}

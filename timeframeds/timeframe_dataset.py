@@ -82,7 +82,7 @@ class TimeframeDataset(UserList):
         # @todo fix method, it fails when self.data is empty, add tests
         d = {column: self.data[index][idx] for idx, column in enumerate(self.columns)}
         if timestamp_format == 'timestamp':
-            int(d[self.tsname] * self.tscoef)
+            d[self.tsname] = int(d[self.tsname] * self.tscoef)
         elif timestamp_format == 'human':
             d[self.tsname] = self.timeframe.fmt(d[self.tsname] * self.tscoef)
         elif timestamp_format == 'iso':
@@ -104,20 +104,23 @@ class TimeframeDataset(UserList):
         return int(self.data[index][self.tsindex] * self.tscoef)
 
     @staticmethod
-    def is_data_ok(data: list, columns: list, tsname: str) -> bool:
+    def is_data_ok(data: list, columns: list, tsname: str, duration=0) -> bool:
         """Check given data is ok to be TimeframeDataset"""
         columns_len = len(columns)
         tsindex = columns.index(tsname)
-        tsvalue = -1
+        tsvalue_previous = -1
         res = True
-        for i, item in enumerate(data):
+        for _, item in enumerate(data):
             res = res and (isinstance(item, list) or isinstance(item, tuple))  # check all data items are lists (tuples)
             res = res and (columns_len == len(item))  # check length for columns and each item
             res = res and (item[tsindex] >= 0)  # check timestamp is positive
-            res = res and (tsvalue < item[tsindex])  # check data is sorted by timestamp
+            res = res and (tsvalue_previous < item[tsindex])  # check data is sorted by timestamp
+            if duration and tsvalue_previous >= 0:
+                res = res and (duration == item[tsindex] - tsvalue_previous)  # check timestamps are stepped by duration
+                # that is to say, no time gaps between candles
             if not res:
                 break
-            tsvalue = item[tsindex]
+            tsvalue_previous = item[tsindex]
         return res
 
     @staticmethod
