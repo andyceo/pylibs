@@ -160,6 +160,16 @@ def getenvars(variables=None):
             'database': None,
         },
 
+        'mysql': {
+            'host': 'mysql',
+            'port': 3306,
+            'username': None,
+            'password': None,
+            'password_file': None,
+            'database': None,
+            "charset": "utf8mb4",
+        },
+
         'delay': 30,
 
         'test': 'sometest'
