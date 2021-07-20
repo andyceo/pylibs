@@ -42,6 +42,7 @@ This list represent the packages interdependencies. Requirements are listed in p
 - `webserver`: none
 - `bitfinex`: timeframeds
 - `timeframeds`: timefuncs
+- `dblogging`: peeweext
 
 
 ## Curated list of awesome third-party Python packages and libraries
