@@ -6,7 +6,7 @@ from peewee import Database
 
 
 class DatabaseLoggingHandler(logging.Handler):
-    '''Customized logging handler that puts logs to the database'''
+    """Customized logging handler that puts logs to the database"""
     def __init__(self, database: Database, model):
         logging.Handler.__init__(self)
         database.bind([model])
