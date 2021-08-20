@@ -1,6 +1,7 @@
 # !/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""This file contains a metaclass Singleton that should be used in singleton classes.
+"""
+This file contains a metaclass Singleton that should be used in singleton classes.
 Examples:
 
     class Logger(metaclass=Singleton):
@@ -13,7 +14,8 @@ If you want to run __init__ every time the class is called, add
 
 to the if statement in Singleton.__call__.
 
-@see https://stackoverflow.com/questions/6760685/creating-a-singleton-in-python"""
+@see https://stackoverflow.com/questions/6760685/creating-a-singleton-in-python
+"""
 
 
 class Singleton(type):
