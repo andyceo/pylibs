@@ -1,6 +1,11 @@
 Python Libraries
 ================
 
+[![Docker Pulls](https://img.shields.io/docker/pulls/andyceo/pylibs.svg)][hub]
+[![Docker Stars](https://img.shields.io/docker/stars/andyceo/pylibs.svg)][hub]
+
+[hub]: https://hub.docker.com/r/andyceo/pylibs
+
 `pylibs` is a collection of open-source (see [LICENSE](LICENSE)) Python packages and libraries to use in other projects.
 
 
