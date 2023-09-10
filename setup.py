@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='pylibs',
-    version='0.2.x',
+    version='0.2.3',
     author="andyceo",
     author_email="andyceo@yandex.ru",
     description="Python libraries",
