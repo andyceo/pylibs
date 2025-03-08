@@ -179,16 +179,6 @@ def getenvars(variables=None):
     return variables
 
 
-def get_basic_logger(evs):
-    """Set logging module basic config and return default logger"""
-    logging.basicConfig(
-        level=evs['LOGGING_LEVEL'],
-        format=evs['LOGGING_FORMAT'],
-        datefmt=evs['LOGGING_DATEFMT']
-    )
-    return logging.getLogger()
-
-
 class ConfigHelper(metaclass=Singleton):
     """This is helper singleton class that aimed to help include parsed config in other app parts and modules"""
     _evs = None
@@ -202,7 +192,6 @@ class ConfigHelper(metaclass=Singleton):
         # @see https://www.python-course.eu/python3_properties.php
         # @see https://www.geeksforgeeks.org/getter-and-setter-in-python/
         self.get_evs()
-        self.get_logger()
 
         self._logger.info('Singleton instance of {} class initialized!'.format(self.__class__.__name__))
 
@@ -214,9 +203,3 @@ class ConfigHelper(metaclass=Singleton):
             else:
                 self._evs = getenvars(default_envars_function(parse(True)))
         return self._evs
-
-    def get_logger(self, logger_name=''):
-        """Return default logger if logger_name not passed"""
-        if self._logger is None:
-            self._logger = get_basic_logger(self._evs)
-        return self._logger if not logger_name else logging.getLogger(logger_name)
